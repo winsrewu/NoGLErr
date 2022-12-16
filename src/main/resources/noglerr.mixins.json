@@ -7,7 +7,7 @@
   ],
   "client": [
     "HideGLErr",
-    "Showid"
+    "ShowId"
   ],
   "injectors": {
     "defaultRequire": 1
