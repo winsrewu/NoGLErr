@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "noopenglerr",
+  "version": "${version}",
+
+  "name": "No OpenGL Err",
+  "description": "是的 这是个辅助模组，而且很杂,具体功能看github",
+  "authors": [
+    "WinsreWu"
+  ],
+  "contact": {
+    "homepage": "https://www.jawbts.xyz/",
+    "sources": "https://github.com/Winner32/NoGLErr"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/noglerr/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "xyz.jawbts.noglerr.NoGLErr"
+    ]
+  },
+  "mixins": [
+    "noglerr.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.17.x",
+    "java": ">=16"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
