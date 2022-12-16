@@ -8,5 +8,5 @@
 原则上只支持1.17.1
 
 # 功能
-1.没啥用的屏蔽OpenGL Error
-2.你可以使用data get来获取物品实体的实体id
+1. 没啥用的屏蔽OpenGL Error
+2. 你可以使用data get来获取物品实体的实体id
