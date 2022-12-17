@@ -4,10 +4,8 @@
   "package": "xyz.jawbts.noglerr.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-  ],
-  "client": [
-    "HideGLErr",
-    "ShowId"
+    "ShowIdOnItem",
+    "ShowIdOnEntity"
   ],
   "injectors": {
     "defaultRequire": 1
