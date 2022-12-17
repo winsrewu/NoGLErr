@@ -12,15 +12,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static xyz.jawbts.noglerr.NoGLErr.NGE_SHOW_DEBUG_ON_ENTITY_NAME;
 import static xyz.jawbts.noglerr.NoGLErr.NGE_SHOW_DEBUG_ON_ITEM_NAME;
 
 
 @Mixin(ItemEntity.class)
 public abstract class ShowIdOnItem extends Entity {
-    @Shadow public abstract int getItemAge();
-    @Shadow private int itemAge;
-
     public ShowIdOnItem(EntityType<?> type, World world) {
         super(type, world);
     }
@@ -39,7 +35,7 @@ public abstract class ShowIdOnItem extends Entity {
                     "\",\"color\":\"white\"},{\"text\":\" Age: \",\"color\":\"gray\"},{\"text\":\"" + age +
                     "\",\"color\":\"white\"},{\"text\":\" Value: \",\"color\":\"gray\"},{\"text\":\"" + via +
                     "\",\"color\":\"white\"}]";
-            setCustomName(Text.Serializer.fromJson((String)s));
+            setCustomName(Text.Serializer.fromJson(s));
         }
     }
 }

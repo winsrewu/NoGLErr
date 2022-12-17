@@ -37,7 +37,7 @@ public abstract class ShowIdOnEntity {
                 String s = "[{\"text\":\"Id: \",\"color\":\"gray\"},{\"text\":\"" + id +
                         "\",\"color\":\"white\"},{\"text\":\" Age: \",\"color\":\"gray\"},{\"text\":\"" + age +
                         "\",\"color\":\"white\"}]";
-                setCustomName(Text.Serializer.fromJson((String)s));
+                setCustomName(Text.Serializer.fromJson(s));
             }
 
             //物品名称显示控制
