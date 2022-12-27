@@ -1,4 +1,3 @@
 {
-  "gamerule.nge:ShowDebugOnItemName": "在物品上方显示它的调试信息",
-  "gamerule.nge:ShowDebugOnEntityName": "在所有实体上方显示它的调试信息"
+  "command.noglerr.main": "NoGLErr! 用法请看 github.com/winner32/noglerr",
 }

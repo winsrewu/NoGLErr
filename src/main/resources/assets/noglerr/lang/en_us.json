@@ -1,4 +1,3 @@
 {
-  "gamerule.nge:ShowDebugOnItemName": "Showing debug message above item entities",
-  "gamerule.nge:ShowDebugOnEntityName": "Showing debug message above all entities"
+  "command.noglerr.main": "NoGLErr! Please check github.com/winner32/noglerr"
 }

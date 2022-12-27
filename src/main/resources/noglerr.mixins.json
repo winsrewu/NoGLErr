@@ -4,8 +4,9 @@
   "package": "xyz.jawbts.noglerr.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "ShowIdOnItem",
-    "ShowIdOnEntity"
+  ],
+  "client": [
+    "ShowIdAboveItem"
   ],
   "injectors": {
     "defaultRequire": 1
