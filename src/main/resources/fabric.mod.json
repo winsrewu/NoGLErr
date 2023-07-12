@@ -2,31 +2,32 @@
   "schemaVersion": 1,
   "id": "noglerr",
   "version": "${version}",
-  "name": "Noglerr",
+  "name": "NoGLErr",
   "description": "很杂的辅助模组",
   "authors": [
     "WinsreWu"
   ],
   "contact": {
-    "website": "https://github.com/winner32/noglerr"
+    "repo": "https://github.com/Winner32/NoGLErr"
   },
-  "license": "MIT",
+  "license": "GPL-3.0",
   "icon": "assets/noglerr/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
-      "xyz.jawbts.noglerr.client.NoglerrClient"
+      "org.jawbts.noglerr.client.NoglerrClient"
     ],
     "main": [
-      "xyz.jawbts.noglerr.Noglerr"
+      "org.jawbts.noglerr.NoGLErr"
     ]
   },
   "mixins": [
     "noglerr.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.12",
+    "fabricloader": ">=0.14.21",
     "fabric": "*",
-    "minecraft": "1.17.1"
+    "minecraft": "1.17.1",
+    "malilib": ">=0.10.0-dev.26"
   }
 }

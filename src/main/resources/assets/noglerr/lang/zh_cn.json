@@ -1,3 +1,37 @@
 {
-  "command.noglerr.main": "NoGLErr! 用法请看 github.com/winner32/noglerr",
+  "noglerr.command.help": "NoGLErr! 用法请看 github.com/winner32/noglerr",
+  "noglerr.commend.configChanged": "Noglerr: 配置文件改变",
+  "noglerr.command.nameAlreadyExists": "这个名称已经存在了!",
+  "noglerr.command.nameNotExists": "这个名称不存在!",
+  "noglerr.command.succeed": "执行成功!",
+  "noglerr.command.readVarListFailed": "读取变量列表错误 (变量配置)",
+  "noglerr.command.readTextListFailed": "读取文字列表错误 (显示实体详细信息配置)",
+  "noglerr.command.readTargetListFailed": "读取目标列表错误 (目标配置)",
+  "noglerr.command.varNotExists": "这个变量不存在!",
+  "noglerr.command.textNotExists": "这个字符串不存在!",
+  "noglerr.command.textNotJson": "这个字符串不是Json!",
+  "noglerr.command.unknownError": "未知错误...",
+  "noglerr.command.argListGenerateError": "无法生成参数列表",
+  "noglerr.command.argListCalculateError": "无法计算参数列表",
+
+  "noglerr.gui.title": "NoGLErr",
+  "noglerr.gui.title.generic": "通用",
+  "noglerr.gui.title.toggleHotkeys": "开关快捷键",
+  "noglerr.gui.title.detailed": "详细配置",
+  "noglerr.gui.title.toggles": "开关",
+
+  "noglerr.comments.gui.openConfigScreen": "打开游戏内noglerr配置菜单",
+  "noglerr.comments.gui.showVisualEffects": "显示视觉效果",
+  "noglerr.comments.gui.showEntityDetailConfig": "配置用json",
+  "noglerr.comments.gui.showEntityDetail": "在实体的上方展示详细信息",
+  "noglerr.comments.gui.showEntityDetailVarConfig": "配置变量",
+  "noglerr.comments.gui.showEntityDetailTargetConfig": "配置目标",
+
+  "noglerr.tweaks.showEntityDetailConfig": "显示实体详细信息配置",
+  "noglerr.tweaks.showVFX": "显示视觉效果",
+  "noglerr.tweaks.showEntityDetail": "显示实体详细信息",
+  "noglerr.tweaks.showEntityDetailVarConfig": "变量配置",
+  "noglerr.tweaks.showEntityDetailTargetConfig": "目标配置",
+
+  "noglerr.hotkeys.openConfigScreen": "打开配置界面"
 }

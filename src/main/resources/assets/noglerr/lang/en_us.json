@@ -1,3 +1,37 @@
 {
-  "command.noglerr.main": "NoGLErr! Please check github.com/winner32/noglerr"
+  "noglerr.command.help": "NoGLErr! Please check github.com/winner32/noglerr",
+  "noglerr.commend.configChanged": "Noglerr: Config Changed!",
+  "noglerr.command.nameAlreadyExists": "This name already exists!",
+  "noglerr.command.nameNotExists": "This name doesn't exist!",
+  "noglerr.command.succeed": "Succeed!",
+  "noglerr.command.readVarListFailed": "Read var list failed (VarConfig)",
+  "noglerr.command.readTextListFailed": "Read text list failed (ShowEntityDetailConfig)",
+  "noglerr.command.readTargetListFailed": "Read Target list failed (TargetConfig)",
+  "noglerr.command.varNotExists": "This var doesn't exist!",
+  "noglerr.command.textNotExists": "This text doesn't exist!",
+  "noglerr.command.textNotJson": "This text isn't a Json!",
+  "noglerr.command.unknownError": "Unknown error here...",
+  "noglerr.command.argListGenerateError": "Can't generate arg list!",
+  "noglerr.command.argListCalculateError": "Can't calculate arg list!",
+
+  "noglerr.gui.title": "NoGLErr",
+  "noglerr.gui.title.generic": "Generic",
+  "noglerr.gui.title.toggleHotkeys": "Toggle Hotkeys",
+  "noglerr.gui.title.detailed": "Detailed Config",
+  "noglerr.gui.title.toggles": "Toggles",
+
+  "noglerr.comments.gui.openConfigScreen": "Open the in-game noglerr config screen",
+  "noglerr.comments.gui.showVisualEffects": "Show visual effects",
+  "noglerr.comments.gui.showEntityDetailConfig": "Config json",
+  "noglerr.comments.gui.showEntityDetail": "Show entities' detail above it",
+  "noglerr.comments.gui.showEntityDetailVarConfig": "Var Config",
+  "noglerr.comments.gui.showEntityDetailTargetConfig": "Target Config",
+
+  "noglerr.tweaks.showEntityDetailConfig": "ShowEntityDetailConfig",
+  "noglerr.tweaks.showVFX": "ShowVFX",
+  "noglerr.tweaks.showEntityDetail": "ShowEntityDetail",
+  "noglerr.tweaks.showEntityDetailVarConfig": "VarConfig",
+  "noglerr.tweaks.showEntityDetailTargetConfig": "TargetConfig",
+
+  "noglerr.hotkeys.openConfigScreen": "OpenConfigScreen"
 }
