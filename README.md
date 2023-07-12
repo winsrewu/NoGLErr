@@ -13,24 +13,23 @@ So it becomes the name of the project
 
 # 版本
 原则上只支持1.17.X  
-客户端需装, 服务端无效
+客户端需装, 服务端无效  
+需要前置模组 malilib  
 
 Mod for MC 1.17.X  
-Only Client needed
+Only Client needed  
+Requires malilib
 
 # 功能
+检测malilib配置, 里面功能默认是关闭的  
+快捷键是n + g + c
 ### 屏蔽OpenGL Error
 已废弃
-### “noglerr”命令
-/noglerr <工具名称> <参数>  
-一些工具的开关
-1. ShowIdAboveItem <true/false> 它可以显示物品的实体Id和它的存活时间
-
-
-# Functions
-### Blocking OpenGL Error
-Disused, but it's the first function
-### Command “noglerr”
-/noglerr <Function Name> <Arguments>  
-Switcher of some tools
-1. ShowIdAboveItem <true/false> It shows the entity Id of the item and its age.
+### “showvar”命令
+注意: text的value必须为Text对象, 和原版指令格式相同  
+target名称就是你想展示的text的名称  
+如果要调用var, 在text里面写$(var name)$  
+var里面可以使用$(name)$ 来调用关于实体的信息  
+例如this.id即为实体id, this.age为实体存在时间, world.time为世界时间
+如果以this.data.(name)开头, 后面的部分和/data get @(这个实体) (name)一样  
+例如$this.data.Inventory$ 返回实体物品栏  
