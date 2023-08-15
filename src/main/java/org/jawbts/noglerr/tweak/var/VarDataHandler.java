@@ -4,16 +4,13 @@ import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.nbt.NbtCompound;
 import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.tweak.Utils;
-import org.jawbts.noglerr.util.PlayerMessageSender;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Stack;
 
 public class VarDataHandler extends DataHandlerBase {
@@ -61,7 +58,7 @@ public class VarDataHandler extends DataHandlerBase {
 
     public void createArgList() {
         argList.clear();
-        
+
         // 读取内容, 拆分成列表
         List<Arg> argCache = new ArrayList<>();
         try {
@@ -289,10 +286,10 @@ public class VarDataHandler extends DataHandlerBase {
     }
 
     private class Arg {
-        private ArgType type;
         private final String value;
         private final boolean isVar;
         private final String varName;
+        private ArgType type;
 
         public Arg(ArgType type, String value) {
             this.type = type;
@@ -378,15 +375,6 @@ public class VarDataHandler extends DataHandlerBase {
                 return 3;
             }
             return 0;
-        }
-
-        public class CalculationException extends Exception{
-            CalculationException(Arg a, Arg b, String reason) {
-                super(a + " can't " + reason + " " + b);
-            }
-            CalculationException(String reason) {
-                super(reason);
-            }
         }
 
         public Arg plus(Arg a) throws CalculationException {
@@ -502,7 +490,7 @@ public class VarDataHandler extends DataHandlerBase {
                 default -> canConvert = false;
             }
             if (canConvert) {
-                return new Arg(ArgType.INT, Integer.toString((int)Double.parseDouble(getTreatedValue())));
+                return new Arg(ArgType.INT, Integer.toString((int) Double.parseDouble(getTreatedValue())));
             }
             throw new CalculationException("can't convert");
         }
@@ -514,7 +502,7 @@ public class VarDataHandler extends DataHandlerBase {
                 default -> canConvert = false;
             }
             if (canConvert) {
-                return new Arg(ArgType.LONG, Long.toString((long)Double.parseDouble(getTreatedValue())));
+                return new Arg(ArgType.LONG, Long.toString((long) Double.parseDouble(getTreatedValue())));
             }
             throw new CalculationException("can't convert");
         }
@@ -538,9 +526,19 @@ public class VarDataHandler extends DataHandlerBase {
                 default -> canConvert = false;
             }
             if (canConvert) {
-                return new Arg(ArgType.FLOAT, Float.toString((float)Double.parseDouble(getTreatedValue())));
+                return new Arg(ArgType.FLOAT, Float.toString((float) Double.parseDouble(getTreatedValue())));
             }
             throw new CalculationException("can't convert");
+        }
+
+        public class CalculationException extends Exception {
+            CalculationException(Arg a, Arg b, String reason) {
+                super(a + " can't " + reason + " " + b);
+            }
+
+            CalculationException(String reason) {
+                super(reason);
+            }
         }
     }
 }

@@ -13,6 +13,8 @@
   "noglerr.command.unknownError": "Unknown error here...",
   "noglerr.command.argListGenerateError": "Can't generate arg list!",
   "noglerr.command.argListCalculateError": "Can't calculate arg list!",
+  "noglerr.command.modelNotReady": "Vosk model not ready",
+
 
   "noglerr.gui.title": "NoGLErr",
   "noglerr.gui.title.generic": "Generic",
@@ -26,12 +28,22 @@
   "noglerr.comments.gui.showEntityDetail": "Show entities' detail above it",
   "noglerr.comments.gui.showEntityDetailVarConfig": "Var Config",
   "noglerr.comments.gui.showEntityDetailTargetConfig": "Target Config",
+  "noglerr.comments.gui.voiceToTextRemoveSpace": "Remove space from result",
+  "noglerr.comments.gui.voiceToTextPath": "model path, .mineraft/voskModels/[name]",
+  "noglerr.comments.gui.voiceToTextNoHistory": "When you press the arrow keys, the voice recognition won't be in there",
+
 
   "noglerr.tweaks.showEntityDetailConfig": "ShowEntityDetailConfig",
   "noglerr.tweaks.showVFX": "ShowVFX",
   "noglerr.tweaks.showEntityDetail": "ShowEntityDetail",
   "noglerr.tweaks.showEntityDetailVarConfig": "VarConfig",
   "noglerr.tweaks.showEntityDetailTargetConfig": "TargetConfig",
+  "noglerr.tweaks.voiceToText": "Speech to text",
+  "noglerr.tweaks.voiceToTextFormat": "Speech to text: format",
+  "noglerr.tweaks.voiceToTextRemoveSpace": "Speech to text: remove space",
+  "noglerr.tweaks.voiceToTextPath": "Speech to text: model path",
+  "noglerr.tweaks.voiceToTextNoHistory": "Speech to text: no history",
+
 
   "noglerr.hotkeys.openConfigScreen": "OpenConfigScreen"
 }

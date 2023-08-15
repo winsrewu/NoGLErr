@@ -13,6 +13,7 @@
   "noglerr.command.unknownError": "未知错误...",
   "noglerr.command.argListGenerateError": "无法生成参数列表",
   "noglerr.command.argListCalculateError": "无法计算参数列表",
+  "noglerr.command.modelNotReady": "Vosk模型未准备完成",
 
   "noglerr.gui.title": "NoGLErr",
   "noglerr.gui.title.generic": "通用",
@@ -26,12 +27,21 @@
   "noglerr.comments.gui.showEntityDetail": "在实体的上方展示详细信息",
   "noglerr.comments.gui.showEntityDetailVarConfig": "配置变量",
   "noglerr.comments.gui.showEntityDetailTargetConfig": "配置目标",
+  "noglerr.comments.gui.voiceToTextRemoveSpace": "从结果中删除空格",
+  "noglerr.comments.gui.voiceToTextPath": "更改模型路径, 即 .mineraft/voskModels/[name]",
+  "noglerr.comments.gui.voiceToTextNoHistory": "当你按上方向键, 语音识别结果不会在里面",
+
 
   "noglerr.tweaks.showEntityDetailConfig": "显示实体详细信息配置",
   "noglerr.tweaks.showVFX": "显示视觉效果",
   "noglerr.tweaks.showEntityDetail": "显示实体详细信息",
   "noglerr.tweaks.showEntityDetailVarConfig": "变量配置",
   "noglerr.tweaks.showEntityDetailTargetConfig": "目标配置",
+  "noglerr.tweaks.voiceToText": "语音转文字",
+  "noglerr.tweaks.voiceToTextFormat": "语音转文字格式",
+  "noglerr.tweaks.voiceToTextRemoveSpace": "语音转文字: 从结果中移除空格",
+  "noglerr.tweaks.voiceToTextPath": "语音转文字模型路径",
+  "noglerr.tweaks.voiceToTextNoHistory": "语音转文字: 不写入历史",
 
   "noglerr.hotkeys.openConfigScreen": "打开配置界面"
 }

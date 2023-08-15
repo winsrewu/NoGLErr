@@ -57,8 +57,8 @@ public class PlayerMessageSender {
         if (MesList.isEmpty()) {
             return;
         }
-        for (Text text : MesList) {
-            player.sendMessage(text, false);
+        for (int i = 0; i < MesList.size(); i++) {
+            player.sendMessage(MesList.get(i), false);
         }
         MesList.clear();
     }
