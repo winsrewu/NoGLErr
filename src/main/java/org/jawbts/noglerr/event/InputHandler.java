@@ -4,9 +4,9 @@ import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.hotkeys.IKeybindManager;
 import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 import fi.dy.masa.malilib.hotkeys.IKeyboardInputHandler;
-import org.jawbts.noglerr.NoGLErr;
 import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.config.Hotkeys;
+import org.jawbts.noglerr.*;
 
 
 public class InputHandler implements IKeybindProvider, IKeyboardInputHandler {

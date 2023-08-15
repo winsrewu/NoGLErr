@@ -5,6 +5,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.tweak.Utils;
+import org.jawbts.noglerr.tweak.voice.Vosk;
 import org.jawbts.noglerr.util.PlayerMessageSender;
 
 public class OnTick {
@@ -17,10 +18,10 @@ public class OnTick {
 
         // 处理堆积的全局消息发送给给玩家
         PlayerMessageSender.getInstance().send(player);
-        //tickUpdateChecker tick
+        // tickUpdateChecker tick
         Utils.TickUpdateChecker.tick();
 
-        //处理视觉效果
+        // 处理视觉效果
         if (Configs.Toggles.SHOW_VFX.getBooleanValue()) {
             if (Configs.Toggles.SHOW_ENTITY_DETAIL.getBooleanValue()) {
                 VarEntityHandler.handleEntityDetail(mc, player, world);
@@ -30,5 +31,8 @@ public class OnTick {
         } else {
             VarEntityHandler.clearAll();
         }
+
+        // Voice To Text tick
+        Vosk.setNeedSend(Configs.Toggles.VOICE_TO_TEXT.getBooleanValue());
     }
 }
