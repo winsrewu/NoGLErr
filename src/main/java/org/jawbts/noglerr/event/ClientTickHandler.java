@@ -8,9 +8,9 @@ public class ClientTickHandler implements IClientTickHandler {
 
     @Override
     public void onClientTick(MinecraftClient mc) {
-        ClientTickHandler.mc = mc;
         if (mc.world != null && mc.player != null) {
             OnTick.onTick(mc);
         }
+        ClientTickHandler.mc = mc;
     }
 }

@@ -16,9 +16,6 @@
   "entrypoints": {
     "client": [
       "org.jawbts.noglerr.client.NoglerrClient"
-    ],
-    "main": [
-      "org.jawbts.noglerr.NoGLErr"
     ]
   },
   "mixins": [
@@ -27,7 +24,7 @@
   "depends": {
     "fabricloader": ">=0.14.21",
     "fabric": "*",
-    "minecraft": "1.17.1",
-    "malilib": ">=0.10.0-dev.26"
+    "minecraft": "1.17.x",
+    "malilib": ">=0.10.0-dev.23"
   }
 }

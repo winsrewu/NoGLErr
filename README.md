@@ -16,11 +16,9 @@ So it becomes the name of the project
 https://github.com/alphacep/vosk-api/tree/master/java/demo  
 
 # 版本
-原则上只支持1.17.X  
 客户端需装, 服务端无效  
 需要前置模组 malilib  
 
-Mod for MC 1.17.X  
 Only Client needed  
 Requires malilib
 
@@ -61,4 +59,4 @@ world.time Long 世界时间, tick为单位
 首先在 .minecraft/voskModels 下载模型 https://alphacephei.com/vosk/models  
 记得解压 完成应该有这样一个文件 voskModels\xxx\README  
 使用 /vosk reload 重载模型  
-其他的看配置界面  
+其他的看配置界面

@@ -15,7 +15,7 @@ import org.jawbts.noglerr.config.Hotkeys;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jawbts.noglerr.NoGLErr.MOD_ID;
+import static org.jawbts.noglerr.client.NoglerrClient.MOD_ID;
 
 public class ConfigScreen extends GuiConfigsBase {
     private static Category currentTab = Category.GENERIC;

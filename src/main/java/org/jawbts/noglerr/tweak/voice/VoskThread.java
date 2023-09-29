@@ -1,6 +1,8 @@
 package org.jawbts.noglerr.tweak.voice;
 
 import org.jawbts.noglerr.config.Configs;
+import org.jawbts.noglerr.tweak.Utils;
+import org.jawbts.noglerr.util.MicrophoneManager;
 import org.jawbts.noglerr.util.PlayerMessageSender;
 import org.vosk.LibVosk;
 import org.vosk.LogLevel;
@@ -15,23 +17,22 @@ import java.util.regex.Pattern;
 public class VoskThread extends Thread {
     private final Pattern pattern = Pattern.compile("\"([^\"]+)\"");
     private Thread thread;
-    private TargetDataLine microphone;
     private boolean inited = false;
     volatile private boolean needReload = false;
     volatile private boolean needSend = false;
-    private boolean processed = false;
-    volatile private boolean needWait = false;
+    volatile private boolean needClose = false;
+    private boolean start = true;
 
     public void needReload() {
         needReload = true;
-        needWait = false;
     }
 
     public void setNeedSend(boolean b) {
-        if (needSend != b) {
-            processed = false;
-        }
         needSend = b;
+    }
+
+    public boolean getNeedSend() {
+        return needSend;
     }
 
     public void start() {
@@ -45,24 +46,19 @@ public class VoskThread extends Thread {
         if (inited) {
             return;
         }
-
         inited = true;
+        start = true;
 
         LibVosk.setLogLevel(LogLevel.INFO);
-        AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 60000, 16, 2, 4, 44100, false);
-        DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-
-        microphone = (TargetDataLine) AudioSystem.getLine(info);
-        microphone.open(format);
-        microphone.start();
+        MicrophoneManager.getInstance().init();
     }
 
     public void close() {
-        if (microphone != null) {
-            microphone.close();
-        }
+        MicrophoneManager.getInstance().close();
+        needClose = true;
     }
 
+    // json中提取字符串
     private String match(String s) {
         Matcher matcher = pattern.matcher(s);
         boolean flag = true;
@@ -75,7 +71,7 @@ public class VoskThread extends Thread {
         return "";
     }
 
-    private void priRun() throws IOException {
+    private void proRun() throws IOException {
         try {
             init();
         } catch (Exception e) {
@@ -90,23 +86,19 @@ public class VoskThread extends Thread {
 
                 byte[] b = new byte[4096];
 
-                while (!needReload) {
+                while (!needReload && !needClose) {
                     if (needSend) {
-                        numBytesRead = microphone.read(b, 0, CHUNK_SIZE);
-                    } else if (processed) {
-                        continue;
+                        numBytesRead = MicrophoneManager.getInstance().read(b, 0, CHUNK_SIZE);
                     }
 
                     if (recognizer.acceptWaveForm(b, numBytesRead)) {
                         String result = match(recognizer.getResult());
 
-                        // 等处理完了再关
-                        processed = true;
                         if (result.equals("")) {
                             continue;
                         }
 
-                        // 结果尝试输出
+                        // 结果输出
                         Vosk.getInstance().sendToChat(result);
                     }
                 }
@@ -117,24 +109,28 @@ public class VoskThread extends Thread {
     }
 
     public void run() {
-        while (true) {
+        while (!needClose) {
+            if (!Utils.gameReadyCheck()) {
+                continue;
+            }
+            if (start) {
+                if (!Utils.playerReadyCheck()) {
+                    continue;
+                }
+                start = false;
+            }
+
             if (needReload) {
                 needReload = false;
                 PlayerMessageSender.getInstance().add("noglerr.command.succeed");
             }
-            if (!needWait) {
-                try {
-                    priRun();
-                } catch (IOException e) {
-                    PlayerMessageSender.getInstance().add("noglerr.command.modelNotReady");
-                    needWait = true;
-                }
-            } else {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException ignored) {
 
-                }
+            try {
+                proRun();
+            } catch (IOException e) {
+                PlayerMessageSender.getInstance().add("noglerr.command.modelNotReady");
+                Configs.Toggles.VOICE_TO_TEXT.setBooleanValue(false);
+                needClose = true;
             }
         }
     }

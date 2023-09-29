@@ -63,8 +63,7 @@ public class PlayerMessageSender {
         MesList.clear();
     }
 
-    boolean isReady() {
-        String testMes = StringUtils.translate("noglerr.command.help");
-        return !testMes.equals("noglerr.command.help");
+    private boolean isReady() {
+        return Utils.playerReadyCheck();
     }
 }

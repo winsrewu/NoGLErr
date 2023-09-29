@@ -8,6 +8,7 @@ import fi.dy.masa.malilib.util.JsonUtils;
 import org.jawbts.noglerr.tweak.var.TargetManager;
 import org.jawbts.noglerr.tweak.var.TextManager;
 import org.jawbts.noglerr.tweak.var.VarManager;
+import org.jawbts.noglerr.tweak.voice.Vosk;
 import org.jawbts.noglerr.util.PlayerMessageSender;
 
 import java.io.File;

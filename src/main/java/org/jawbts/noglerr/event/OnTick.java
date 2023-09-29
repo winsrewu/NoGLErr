@@ -1,6 +1,7 @@
 package org.jawbts.noglerr.event;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.option.LanguageOptionsScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import org.jawbts.noglerr.config.Configs;
@@ -33,6 +34,6 @@ public class OnTick {
         }
 
         // Voice To Text tick
-        Vosk.setNeedSend(Configs.Toggles.VOICE_TO_TEXT.getBooleanValue());
+        Vosk.tick();
     }
 }

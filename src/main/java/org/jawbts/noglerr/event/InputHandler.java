@@ -4,9 +4,9 @@ import fi.dy.masa.malilib.hotkeys.IHotkey;
 import fi.dy.masa.malilib.hotkeys.IKeybindManager;
 import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 import fi.dy.masa.malilib.hotkeys.IKeyboardInputHandler;
+import org.jawbts.noglerr.client.NoglerrClient;
 import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.config.Hotkeys;
-import org.jawbts.noglerr.*;
 
 
 public class InputHandler implements IKeybindProvider, IKeyboardInputHandler {
@@ -33,7 +33,7 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler {
 
     @Override
     public void addHotkeys(IKeybindManager manager) {
-        manager.addHotkeysForCategory(NoGLErr.MOD_NAME, "Gereric", Hotkeys.GENERIC_HOTKEY_LIST);
-        manager.addHotkeysForCategory(NoGLErr.MOD_NAME, "Toggles", Configs.Toggles.OPTIONS);
+        manager.addHotkeysForCategory(NoglerrClient.MOD_NAME, "Gereric", Hotkeys.GENERIC_HOTKEY_LIST);
+        manager.addHotkeysForCategory(NoglerrClient.MOD_NAME, "Toggles", Configs.Toggles.OPTIONS);
     }
 }
