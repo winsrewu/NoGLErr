@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'fabric-loom' version '1.0-SNAPSHOT'
@@ -66,7 +68,7 @@ java {
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
-    archivesBaseName = project.archives_base_name
+    archivesBaseName = project.archives_base_name + "-" + project.minecraft_version
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
     // if it is present.
     // If you remove this line, sources will not be generated.
@@ -97,3 +99,11 @@ publishing {
         }
     }
 }
+
+task("remapShadowJar", type: RemapJarTask) {
+    dependsOn(shadowJar)
+    input = shadowJar.archiveFile
+    addNestedDependencies = true
+}
+
+assemble.dependsOn(remapShadowJar)

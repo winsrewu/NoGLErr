@@ -15,7 +15,6 @@
   "noglerr.command.argListCalculateError": "Can't calculate arg list!",
   "noglerr.command.modelNotReady": "Vosk model not ready",
 
-
   "noglerr.gui.title": "NoGLErr",
   "noglerr.gui.title.generic": "Generic",
   "noglerr.gui.title.toggleHotkeys": "Toggle Hotkeys",
@@ -31,7 +30,7 @@
   "noglerr.comments.gui.voiceToTextRemoveSpace": "Remove space from result",
   "noglerr.comments.gui.voiceToTextPath": "model path, .mineraft/voskModels/[name]",
   "noglerr.comments.gui.voiceToTextNoHistory": "When you press the arrow keys, the voice recognition won't be in there",
-
+  "noglerr.comments.gui.microphoneSwitch": "Microphone Switch",
 
   "noglerr.tweaks.showEntityDetailConfig": "ShowEntityDetailConfig",
   "noglerr.tweaks.showVFX": "ShowVFX",
@@ -43,7 +42,7 @@
   "noglerr.tweaks.voiceToTextRemoveSpace": "Speech to text: remove space",
   "noglerr.tweaks.voiceToTextPath": "Speech to text: model path",
   "noglerr.tweaks.voiceToTextNoHistory": "Speech to text: no history",
-
+  "noglerr.tweaks.microphoneSwitch": "Microphone",
 
   "noglerr.hotkeys.openConfigScreen": "OpenConfigScreen"
 }

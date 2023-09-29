@@ -3,7 +3,8 @@ package org.jawbts.noglerr.config;
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IHotkeyTogglable;
-import fi.dy.masa.malilib.config.options.*;
+import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
+import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.util.StringUtils;
 
 import java.util.List;
@@ -52,7 +53,11 @@ public class Configs {
         public static final ConfigBooleanHotkeyed VOICE_TO_TEXT_NO_HISTORY = new ConfigBooleanHotkeyed("noglerr.tweaks.voiceToTextNoHistory", false, "",
                 StringUtils.translate("noglerr.comments.gui.voiceToTextNoHistory"));
 
+        public static final ConfigBooleanHotkeyed MICROPHONE_SWITCH = new ConfigBooleanHotkeyed("noglerr.tweaks.microphoneSwitch", false, "",
+                StringUtils.translate("noglerr.comments.gui.microphoneSwitch"));
+
         public static final List<IHotkeyTogglable> OPTIONS = ImmutableList.of(
+                MICROPHONE_SWITCH,
                 VOICE_TO_TEXT,
                 VOICE_TO_TEXT_REMOVE_SPACE,
                 VOICE_TO_TEXT_NO_HISTORY,

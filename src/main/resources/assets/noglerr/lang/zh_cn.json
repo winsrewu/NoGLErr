@@ -30,6 +30,7 @@
   "noglerr.comments.gui.voiceToTextRemoveSpace": "从结果中删除空格",
   "noglerr.comments.gui.voiceToTextPath": "更改模型路径, 即 .mineraft/voskModels/[name]",
   "noglerr.comments.gui.voiceToTextNoHistory": "当你按上方向键, 语音识别结果不会在里面",
+  "noglerr.comments.gui.microphoneSwitch": "麦克风开关",
 
 
   "noglerr.tweaks.showEntityDetailConfig": "显示实体详细信息配置",
@@ -42,6 +43,7 @@
   "noglerr.tweaks.voiceToTextRemoveSpace": "语音转文字: 从结果中移除空格",
   "noglerr.tweaks.voiceToTextPath": "语音转文字模型路径",
   "noglerr.tweaks.voiceToTextNoHistory": "语音转文字: 不写入历史",
+  "noglerr.tweaks.microphoneSwitch": "麦克风",
 
   "noglerr.hotkeys.openConfigScreen": "打开配置界面"
 }
