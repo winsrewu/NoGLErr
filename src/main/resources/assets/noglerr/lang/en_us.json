@@ -14,6 +14,9 @@
   "noglerr.command.argListGenerateError": "Can't generate arg list!",
   "noglerr.command.argListCalculateError": "Can't calculate arg list!",
   "noglerr.command.modelNotReady": "Vosk model not ready",
+  "noglerr.command.versionInfoNotReady": "Version info not ready. Do '/noglerr version check' first.",
+  "noglerr.command.versionInfo": "Current branch: %s , Current version: %s , Latest version: %s , Lowest safe version: %s",
+  "noglerr.command.cannotOpenFolder": "Error while opening folder. Check log for details.",
 
   "noglerr.gui.title": "NoGLErr",
   "noglerr.gui.title.generic": "Generic",
@@ -31,6 +34,9 @@
   "noglerr.comments.gui.voiceToTextPath": "model path, .mineraft/voskModels/[name]",
   "noglerr.comments.gui.voiceToTextNoHistory": "When you press the arrow keys, the voice recognition won't be in there",
   "noglerr.comments.gui.microphoneSwitch": "Microphone Switch",
+  "noglerr.comments.gui.enableAutoUpdateCheck": "If enabled, will automatically check for updates when the game starts. Recommended.",
+  "noglerr.comments.gui.silentUpdate": "Only notify you when in case of emergency. Recommended.",
+  "noglerr.comments.gui.voiceToTextFormat": "Voice to text format",
 
   "noglerr.tweaks.showEntityDetailConfig": "ShowEntityDetailConfig",
   "noglerr.tweaks.showVFX": "ShowVFX",
@@ -43,6 +49,16 @@
   "noglerr.tweaks.voiceToTextPath": "Speech to text: model path",
   "noglerr.tweaks.voiceToTextNoHistory": "Speech to text: no history",
   "noglerr.tweaks.microphoneSwitch": "Microphone",
+  "noglerr.tweaks.enableAutoUpdateCheck": "Enable Auto Update Check",
+  "noglerr.tweaks.silentUpdateCheck": "Silent Update Check",
+
+  "noglerr.info.versionOutDated": "Your Noglerr version is out dated.",
+  "noglerr.info.versionNotSafe": "Your Noglerr version is not safe",
+  "noglerr.info.checkUrl": "Please check this url: ",
+  "noglerr.info.downloadLatestVersion": "Download latest version here: ",
+  "noglerr.info.safeVersionNotReady": "Safe version not ready yet. Please disable your mod for now.",
+  "noglerr.info.checkFiled": "Check failed, check your log for further information.",
+  "noglerr.info.versionPerfect": "Noglerr at latest safe version.",
 
   "noglerr.hotkeys.openConfigScreen": "OpenConfigScreen"
 }

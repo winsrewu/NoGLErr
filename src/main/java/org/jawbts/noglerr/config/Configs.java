@@ -3,6 +3,7 @@ package org.jawbts.noglerr.config;
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IHotkeyTogglable;
+import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -12,6 +13,15 @@ import java.util.List;
 public class Configs {
 
     public static class Generic {
+        public static final ConfigBoolean ENABLE_AUTO_UPDATE_CHECK = new ConfigBoolean("noglerr.tweaks.enableAutoUpdateCheck", true,
+                StringUtils.translate("noglerr.comments.gui.enableAutoUpdateCheck"));
+        public static final ConfigBoolean SILENT_UPDATE_CHECK = new ConfigBoolean("noglerr.tweaks.silentUpdateCheck", true,
+                StringUtils.translate("noglerr.comments.gui.silentUpdate"));
+
+        public static final List<IConfigBase> OPTIONS = ImmutableList.of(
+                ENABLE_AUTO_UPDATE_CHECK,
+                SILENT_UPDATE_CHECK
+        );
     }
 
     public static class Detailed {

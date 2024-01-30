@@ -63,7 +63,11 @@ public class TextDataHandler extends DataHandlerBase {
         Matcher matcher = compile.matcher(data.value);
 
         while (matcher.find()) {
-            VarDataHandler handler = VarManager.getInstance().getHandler(matcher.group().replaceAll("\\$", ""));
+            String name = matcher.group().replaceAll("\\$", "");
+            VarDataHandler handler = VarManager.getInstance().getHandler(name);
+            if (handler == null) {
+                handler = ScriptVarManager.getInstance().getHandler(name);
+            }
             if (handler == null) {
                 argListFailReason = Text.Serializer.toJson(Utils.createText("noglerr.command.varNotExists", "red"));
             }

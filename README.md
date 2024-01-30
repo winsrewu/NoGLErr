@@ -8,12 +8,14 @@ for something special and strange.
 不要看这个名字，这只是它一个废掉的功能，而且是第一个  
 所以它变成了项目名
 
-Don't look at the name, it's just one of its deprecated features and it's the first  
+Don't mind the name, it's just one of its deprecated features, and it's the first  
 So it becomes the name of the project
 
 # 版权
 此模组自 1.0.5 开始集成了 vosk 的库, 感谢他们  
 https://github.com/alphacep/vosk-api/tree/master/java/demo  
+此模组自 1.0.7 开始集成了 openjdk 的 nashorn , 感谢他们  
+https://github.com/openjdk/nashorn
 
 # 版本
 客户端需装, 服务端无效  

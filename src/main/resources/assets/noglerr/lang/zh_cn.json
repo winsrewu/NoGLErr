@@ -14,6 +14,9 @@
   "noglerr.command.argListGenerateError": "无法生成参数列表",
   "noglerr.command.argListCalculateError": "无法计算参数列表",
   "noglerr.command.modelNotReady": "Vosk模型未准备完成",
+  "noglerr.command.versionInfoNotReady": "版本信息未就绪, 请先执行 '/noglerr version check'.",
+  "noglerr.command.versionInfo": "当前分支: %s , 当前版本: %s , 最新版本: %s , 最低安全版本: %s",
+  "noglerr.command.cannotOpenFolder": "无法打开文件夹. 请检查日志以获取更多信息.",
 
   "noglerr.gui.title": "NoGLErr",
   "noglerr.gui.title.generic": "通用",
@@ -31,7 +34,9 @@
   "noglerr.comments.gui.voiceToTextPath": "更改模型路径, 即 .mineraft/voskModels/[name]",
   "noglerr.comments.gui.voiceToTextNoHistory": "当你按上方向键, 语音识别结果不会在里面",
   "noglerr.comments.gui.microphoneSwitch": "麦克风开关",
-
+  "noglerr.comments.gui.enableAutoUpdateCheck": "如果启用, 则在游戏启动时自动检查更新. 建议启用.",
+  "noglerr.comments.gui.silentUpdate": "仅在有重大bug时提醒您更新. 建议启用.",
+  "noglerr.comments.gui.voiceToTextFormat": "语音转文字格式",
 
   "noglerr.tweaks.showEntityDetailConfig": "显示实体详细信息配置",
   "noglerr.tweaks.showVFX": "显示视觉效果",
@@ -44,6 +49,16 @@
   "noglerr.tweaks.voiceToTextPath": "语音转文字模型路径",
   "noglerr.tweaks.voiceToTextNoHistory": "语音转文字: 不写入历史",
   "noglerr.tweaks.microphoneSwitch": "麦克风",
+  "noglerr.tweaks.enableAutoUpdateCheck": "允许自动更新检查",
+  "noglerr.tweaks.silentUpdateCheck": "静默更新",
+
+  "noglerr.info.versionOutDated": "Noglerr 模组有可用更新.",
+  "noglerr.info.versionNotSafe": "Noglerr 模组不安全.",
+  "noglerr.info.checkUrl": "请访问此网站: ",
+  "noglerr.info.downloadLatestVersion": "从此处下载最新版本: ",
+  "noglerr.info.safeVersionNotReady": "安全的版本尚未就绪, 请暂时禁用您的模组.",
+  "noglerr.info.checkFiled": "更新检测失败, 请检查您的日志.",
+  "noglerr.info.versionPerfect": "Noglerr 是最新安全版本.",
 
   "noglerr.hotkeys.openConfigScreen": "打开配置界面"
 }

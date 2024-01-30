@@ -26,6 +26,9 @@ public class MicrophoneManager {
     }
 
     public void close() {
+        if (microphone == null) {
+            return;
+        }
         microphone.close();
         initFlag = false;
     }

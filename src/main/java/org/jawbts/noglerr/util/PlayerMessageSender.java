@@ -2,7 +2,10 @@ package org.jawbts.noglerr.util;
 
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import org.jawbts.noglerr.tweak.Utils;
 
 import java.util.ArrayList;
@@ -19,32 +22,21 @@ public class PlayerMessageSender {
     }
 
     public void add(Text text) {
-        if (!isReady()) {
-            return;
-        }
         MesList.add(text);
     }
 
     public void add(String color, String s) {
-        if (!isReady()) {
-            return;
-        }
         s = StringUtils.translate(s);
-        MesList.add(Text.Serializer.fromJson("{\"color\":\"" + color + "\",\"text\":\"" + s + "\"}"));
+        // MesList.add(Text.Serializer.fromJson("{\"color\":\"" + color + "\",\"text\":\"" + s + "\"}"));
+        MesList.add(new LiteralText(s).setStyle(Style.EMPTY.withColor(TextColor.parse(color))));
     }
 
     public void add(String s) {
-        if (!isReady()) {
-            return;
-        }
         s = StringUtils.translate(s);
         MesList.add(Text.of(s));
     }
 
     public void add(List<?> s) {
-        if (!isReady()) {
-            return;
-        }
         for (Object ss : s) {
             add(Utils.escapeString(ss.toString()));
         }

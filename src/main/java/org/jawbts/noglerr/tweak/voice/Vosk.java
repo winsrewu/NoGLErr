@@ -28,11 +28,12 @@ public class Vosk {
     public void init() {
         File folder = new File("./", "voskModels");
         folder.mkdir();
-        voskThread = new VoskThread();
-        voskThread.start();
     }
 
     public static void tick() {
+        if (!Utils.gameReadyCheck()) {
+            return;
+        }
         setStatus(Configs.Toggles.VOICE_TO_TEXT.getBooleanValue(), Configs.Toggles.MICROPHONE_SWITCH.getBooleanValue());
 
         if (!needStart) {

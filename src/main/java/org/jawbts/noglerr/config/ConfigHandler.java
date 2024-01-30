@@ -34,6 +34,7 @@ public class ConfigHandler implements IConfigHandler {
 
         JsonObject jsonObject = jsonElement.getAsJsonObject();
 
+        ConfigUtils.readConfigBase(jsonObject, "generic", Configs.Generic.OPTIONS);
         ConfigUtils.readConfigBase(jsonObject, "detailed", Configs.Detailed.OPTIONS);
         ConfigUtils.readConfigBase(jsonObject, "genericHotKey", Hotkeys.GENERIC_HOTKEY_LIST);
 
@@ -44,6 +45,7 @@ public class ConfigHandler implements IConfigHandler {
         if ((CONFIG_DIR.exists() && CONFIG_DIR.isDirectory()) || CONFIG_DIR.mkdirs()) {
             JsonObject jsonObject = new JsonObject();
 
+            ConfigUtils.writeConfigBase(jsonObject, "generic", Configs.Generic.OPTIONS);
             ConfigUtils.writeConfigBase(jsonObject, "detailed", Configs.Detailed.OPTIONS);
             ConfigUtils.writeConfigBase(jsonObject, "genericHotKey", Hotkeys.GENERIC_HOTKEY_LIST);
 

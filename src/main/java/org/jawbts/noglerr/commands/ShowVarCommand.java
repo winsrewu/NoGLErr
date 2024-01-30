@@ -2,14 +2,17 @@ package org.jawbts.noglerr.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import fi.dy.masa.malilib.util.StringUtils;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import org.jawbts.noglerr.tweak.Utils;
+import org.jawbts.noglerr.tweak.var.ScriptVarManager;
 import org.jawbts.noglerr.tweak.var.TargetManager;
 import org.jawbts.noglerr.tweak.var.TextManager;
 import org.jawbts.noglerr.tweak.var.VarManager;
 import org.jawbts.noglerr.util.PlayerMessageSender;
+import org.jawbts.noglerr.util.ScriptVarUtils;
 
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
@@ -94,6 +97,23 @@ public class ShowVarCommand {
                                         .then(argument("Name", StringArgumentType.string())
                                                 .executes(context -> delTarget(StringArgumentType.getString(context, "Name")))
                                         ))
+                        )
+                        .then(literal("script")
+                                .then(literal("folder")
+                                        .executes(context -> {
+                                            if (!ScriptVarUtils.openFolder()) {
+                                                pms.add("red", "noglerr.command.cannotOpenFolder");
+                                            }
+                                            return 1;
+                                        })
+                                )
+                                .then(literal("reload")
+                                        .executes(context -> {
+                                            ScriptVarManager.getInstance().reload();
+                                            pms.add("noglerr.command.succeed");
+                                            return 0;
+                                        })
+                                )
                         )
         );
     }
