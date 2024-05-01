@@ -76,9 +76,7 @@ public class OnTick {
                     if (vi.checkUrl != null) {
                         MutableText text = new LiteralText(StringUtils.translate("noglerr.info.checkUrl"))
                                 .setStyle(Style.EMPTY.withColor(TextColor.parse("red")));
-                        text.append(new LiteralText(vi.checkUrl.toString()).setStyle(Style.EMPTY.withClickEvent(
-                                new ClickEvent(ClickEvent.Action.OPEN_URL, vi.checkUrl.toString())
-                        ).withColor(TextColor.parse("blue")).withUnderline(true)));
+                        text.append(PlayerMessageSender.Tools.genUrlOpenText(vi.checkUrl));
                         pms.add(text);
                     }
 

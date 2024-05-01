@@ -3,6 +3,7 @@ package org.jawbts.noglerr.client;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.event.TickHandler;
+import fi.dy.masa.malilib.util.StringUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -26,9 +27,7 @@ public class NoglerrClient implements ClientModInitializer {
     public static final String MOD_NAME = "NoGLErr";
     public static final String MOD_BRANCH_ID = "fabric-1.17.x";
 
-    // see ./gradle.properties:mod_version
-    // Must be same.
-    public static final String MOD_VERSION = "1.0.7";
+    public static final String MOD_VERSION = StringUtils.getModVersionString(MOD_ID);
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static UpdateChecker updateChecker = null;
