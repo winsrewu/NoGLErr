@@ -8,7 +8,7 @@
     "WinsreWu"
   ],
   "contact": {
-    "repo": "https://github.com/Winner32/NoGLErr"
+    "repo": "https://github.com/WinsreWu/NoGLErr"
   },
   "license": "GPL-3.0",
   "icon": "assets/noglerr/icon.png",
@@ -22,9 +22,9 @@
     "noglerr.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.21",
+    "fabricloader": ">=${fabric_loader_version}",
     "fabric": "*",
     "minecraft": "1.17.x",
-    "malilib": ">=0.10.0-dev.23"
+    "malilib": ">=${malilib_version}"
   }
 }

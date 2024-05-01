@@ -55,11 +55,15 @@ shadowJar {
 }
 
 processResources {
-    inputs.property "version", project.version
-    filteringCharset "UTF-8"
+    def properties = [
+            version: project.version,
+            malilib_version: malilib_version,
+            fabric_loader_version: loader_version
+    ]
+    inputs.properties properties
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand properties
     }
 }
 
