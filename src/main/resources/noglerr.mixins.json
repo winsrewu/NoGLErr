@@ -6,8 +6,7 @@
   "mixins": [
   ],
   "client": [
-    "EntitySelectorAccessor",
-    "ChatHudListenerMixin"
+    "EntitySelectorAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

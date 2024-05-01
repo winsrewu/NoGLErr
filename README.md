@@ -50,6 +50,11 @@ world.time是long型, 必须$world.time$ + 1L
 由于符号奇怪的优先级, 推荐多加括号  
 例如 1 = 1 = true 它会先判断 1 = true 然后结果再去 = 1   
 
+还可以使用 /showvar script folder 打开脚本文件夹(只支持windows)  
+里面创建一个(多个也行)以.js结尾的文件, 里面使用javascript注册一个函数, 比如叫test  
+那么可以使用$test$调用该函数  
+记得更改后使用 /showvar script reload 刷新
+
 
 支持的变量列表:  
 this.data.* 类型不定 功能相当于/data get  

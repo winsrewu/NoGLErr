@@ -26,7 +26,7 @@ public class ScriptVarUtils {
 
     public static boolean openFolder() {
         try {
-            // TODO only support windows
+            // TODO support other system besides Windows
             Runtime.getRuntime().exec("explorer " + Objects.requireNonNull(getConfigDir()).getAbsolutePath());
 
             // it's headless mod, don't use it.

@@ -64,7 +64,7 @@ public class OnTick {
                 if (vi.isOutDated(NoglerrClient.MOD_VERSION)) {
                     perfect = false;
                     NoglerrClient.LOGGER.warn("Current noglerr version out dated.");
-                    if (notSilent) pms.add("red", StringUtils.translate("noglerr.info.versionOutDated"));
+                    if (notSilent) pms.add("red", "noglerr.info.versionOutDated");
                 }
                 if (vi.isNotSafe(NoglerrClient.MOD_VERSION)) {
                     perfect = false;
@@ -72,7 +72,7 @@ public class OnTick {
                     sb.append("Current noglerr version not safe.").append(vi.checkUrl == null ? "" :
                             " Please check this url: " + vi.checkUrl);
 
-                    pms.add("red", StringUtils.translate("noglerr.info.versionNotSafe"));
+                    pms.add("red", "noglerr.info.versionNotSafe");
                     if (vi.checkUrl != null) {
                         MutableText text = new LiteralText(StringUtils.translate("noglerr.info.checkUrl"))
                                 .setStyle(Style.EMPTY.withColor(TextColor.parse("red")));
