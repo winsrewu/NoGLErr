@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
+    private static boolean tempReadyState = false;
+    private static boolean tempGameReadyState = false;
+
     public static String escapeString(String input) {
         input = input.replaceAll("\\\\", "");
         return input.replaceAll("\"", "\\\\\"");
@@ -24,6 +27,36 @@ public class Utils {
         } catch (JsonSyntaxException e) {
             return Text.of(s);
         }
+    }
+
+    /**
+     * 玩家是否在游戏, 没开任何gui
+     *
+     * @return 玩家是否准备好接受消息
+     */
+    public static boolean playerReadyCheck() {
+        if (TickUpdateChecker.check("READY_CHECK")) {
+            return tempReadyState;
+        }
+        TickUpdateChecker.mark("READY_CHECK");
+
+        tempReadyState = ClientTickHandler.mc != null && ClientTickHandler.mc.currentScreen == null;
+        return tempReadyState;
+    }
+
+    /**
+     * 和gui没关系 开不开无所谓
+     *
+     * @return 玩家是否在游戏里
+     */
+    public static boolean gameReadyCheck() {
+        if (TickUpdateChecker.check("G_READY_CHECK")) {
+            return tempGameReadyState;
+        }
+        TickUpdateChecker.mark("G_READY_CHECK");
+
+        tempGameReadyState = ClientTickHandler.mc != null && ClientTickHandler.mc.player != null;
+        return tempGameReadyState;
     }
 
     // 检查1tick内只需调用一次的是否会调用多次
@@ -52,31 +85,5 @@ public class Utils {
                 entry.setValue(false);
             }
         }
-    }
-
-    // 玩家是否准备好接受消息
-    // 玩家是否在游戏, 没开任何gui
-    private static boolean tempReadyState = false;
-    public static boolean playerReadyCheck() {
-        if (TickUpdateChecker.check("READY_CHECK")) {
-            return tempReadyState;
-        }
-        TickUpdateChecker.mark("READY_CHECK");
-
-        tempReadyState = ClientTickHandler.mc != null && ClientTickHandler.mc.currentScreen == null;
-        return tempReadyState;
-    }
-
-    // 玩家是否在游戏里
-    // 和gui没关系 开不开无所谓
-    private static boolean tempGameReadyState = false;
-    public static boolean gameReadyCheck() {
-        if (TickUpdateChecker.check("G_READY_CHECK")) {
-            return tempGameReadyState;
-        }
-        TickUpdateChecker.mark("G_READY_CHECK");
-
-        tempGameReadyState = ClientTickHandler.mc != null && ClientTickHandler.mc.player != null;
-        return tempGameReadyState;
     }
 }

@@ -55,6 +55,5 @@
   "noglerr.info.safeVersionNotReady": "Safe version not ready yet. Please disable your mod for now.",
   "noglerr.info.checkFiled": "Check failed, check your log for further information.",
   "noglerr.info.versionPerfect": "Noglerr at latest safe version.",
-  "noglerr.info.folderOpenFailed": "The folder could not be opened. Please open it manually.",
   "noglerr.hotkeys.openConfigScreen": "OpenConfigScreen"
 }

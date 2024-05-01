@@ -4,11 +4,9 @@ import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
 import org.jawbts.noglerr.tweak.Utils;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;

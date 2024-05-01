@@ -55,6 +55,5 @@
   "noglerr.info.safeVersionNotReady": "安全的版本尚未就绪, 请暂时禁用您的模组.",
   "noglerr.info.checkFiled": "更新检测失败, 请检查您的日志.",
   "noglerr.info.versionPerfect": "Noglerr 是最新安全版本.",
-  "noglerr.info.folderOpenFailed": "文件夹无法打开. 请手动打开.",
   "noglerr.hotkeys.openConfigScreen": "打开配置界面"
 }
