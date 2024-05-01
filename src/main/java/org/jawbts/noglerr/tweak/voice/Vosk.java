@@ -10,11 +10,11 @@ import java.sql.Timestamp;
 
 public class Vosk {
     private static final Vosk INSTANCE = new Vosk();
+    private static final Timestamp sendCloseTime = new Timestamp(System.currentTimeMillis());
     private static VoskThread voskThread;
     private static boolean needStart = false;
     private static boolean needSend = false;
     private static boolean preNeedSend = false;
-    private static Timestamp sendCloseTime = new Timestamp(System.currentTimeMillis());
 
     public static Vosk getInstance() {
         return INSTANCE;
@@ -23,11 +23,6 @@ public class Vosk {
     public static void setStatus(boolean needStart, boolean needSend) {
         Vosk.needStart = needStart;
         Vosk.needSend = needSend;
-    }
-
-    public void init() {
-        File folder = new File("./", "voskModels");
-        folder.mkdir();
     }
 
     public static void tick() {
@@ -59,6 +54,11 @@ public class Vosk {
                 sendCloseTime.before(new Timestamp(System.currentTimeMillis() - 500L))) {
             voskThread.setNeedSend(false);
         }
+    }
+
+    public void init() {
+        File folder = new File("./", "voskModels");
+        folder.mkdir();
     }
 
     public void reload() {

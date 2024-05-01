@@ -2,7 +2,6 @@ package org.jawbts.noglerr.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import fi.dy.masa.malilib.util.StringUtils;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;

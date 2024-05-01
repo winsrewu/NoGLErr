@@ -12,7 +12,6 @@ import org.jawbts.noglerr.config.Category;
 import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.config.Hotkeys;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,14 +63,12 @@ public class ConfigScreen extends GuiConfigsBase {
         if (tab == Category.GENERIC) {
             configs = Configs.Generic.OPTIONS;
             ImmutableList.Builder<ConfigOptionWrapper> builder = ImmutableList.builder();
-            for (IConfigBase config : configs)
-            {
+            for (IConfigBase config : configs) {
                 builder.add(new ConfigOptionWrapper(config));
             }
 
             configs = ConfigUtils.createConfigWrapperForType(ConfigType.HOTKEY, ImmutableList.copyOf(Hotkeys.GENERIC_HOTKEY_LIST));
-            for (IConfigBase config : configs)
-            {
+            for (IConfigBase config : configs) {
                 builder.add(new ConfigOptionWrapper(config));
             }
 

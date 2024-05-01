@@ -56,6 +56,12 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class World {
+    private final net.minecraft.world.World world;
+
+    public World(net.minecraft.world.World world) {
+        this.world = world;
+    }
+
     public boolean isClient() {
         return world.isClient();
     }
@@ -872,11 +878,6 @@ public class World {
 
     public int getMoonPhase() {
         return world.getMoonPhase();
-    }
-
-    private final net.minecraft.world.World world;
-    public World(net.minecraft.world.World world) {
-        this.world = world;
     }
 
 

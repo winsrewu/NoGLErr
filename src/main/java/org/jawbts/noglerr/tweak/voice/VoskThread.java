@@ -9,7 +9,7 @@ import org.vosk.LogLevel;
 import org.vosk.Model;
 import org.vosk.Recognizer;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,12 +27,12 @@ public class VoskThread extends Thread {
         needReload = true;
     }
 
-    public void setNeedSend(boolean b) {
-        needSend = b;
-    }
-
     public boolean getNeedSend() {
         return needSend;
+    }
+
+    public void setNeedSend(boolean b) {
+        needSend = b;
     }
 
     public void start() {

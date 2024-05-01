@@ -17,11 +17,11 @@ import java.io.FileReader;
 public class ScriptVarManager {
     private static final ScriptVarManager INSTANCE = new ScriptVarManager();
     private static final PlayerMessageSender pms = PlayerMessageSender.getInstance();
+    private ScriptEngine engine;
+
     public static ScriptVarManager getInstance() {
         return INSTANCE;
     }
-
-    private ScriptEngine engine;
 
     public ScriptEngine getEngine() {
         return engine;
@@ -47,9 +47,9 @@ public class ScriptVarManager {
 
     public String getRes(String name, Entity entity) throws ScriptException, NoSuchMethodException {
         return ((Invocable) engine).invokeFunction(
-                    name,
-                    new org.jawbts.noglerr.tweak.var.javascript.proxy.Entity(entity),
-                    new Utils()
-                ).toString();
+                name,
+                new org.jawbts.noglerr.tweak.var.javascript.proxy.Entity(entity),
+                new Utils()
+        ).toString();
     }
 }

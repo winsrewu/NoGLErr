@@ -47,6 +47,12 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class Entity {
+    private final net.minecraft.entity.Entity entity;
+
+    public Entity(net.minecraft.entity.Entity entity) {
+        this.entity = entity;
+    }
+
     public boolean collidesWithStateAtPos(BlockPos pos, BlockState state) {
         return entity.collidesWithStateAtPos(pos, state);
     }
@@ -119,12 +125,12 @@ public class Entity {
         entity.onRemoved();
     }
 
-    public void setPose(EntityPose pose) {
-        entity.setPose(pose);
-    }
-
     public EntityPose getPose() {
         return entity.getPose();
+    }
+
+    public void setPose(EntityPose pose) {
+        entity.setPose(pose);
     }
 
     public boolean isInRange(net.minecraft.entity.Entity other, double radius) {
@@ -151,10 +157,6 @@ public class Entity {
         entity.baseTick();
     }
 
-    public void setOnFire(boolean onFire) {
-        entity.setOnFire(onFire);
-    }
-
     public void attemptTickInVoid() {
         entity.attemptTickInVoid();
     }
@@ -179,12 +181,12 @@ public class Entity {
         entity.setOnFireFor(seconds);
     }
 
-    public void setFireTicks(int ticks) {
-        entity.setFireTicks(ticks);
-    }
-
     public int getFireTicks() {
         return entity.getFireTicks();
+    }
+
+    public void setFireTicks(int ticks) {
+        entity.setFireTicks(ticks);
     }
 
     public void extinguish() {
@@ -195,12 +197,12 @@ public class Entity {
         return entity.doesNotCollide(offsetX, offsetY, offsetZ);
     }
 
-    public void setOnGround(boolean onGround) {
-        entity.setOnGround(onGround);
-    }
-
     public boolean isOnGround() {
         return entity.isOnGround();
+    }
+
+    public void setOnGround(boolean onGround) {
+        entity.setOnGround(onGround);
     }
 
     public void move(MovementType movementType, Vec3d movement) {
@@ -583,6 +585,10 @@ public class Entity {
         return entity.isOnFire();
     }
 
+    public void setOnFire(boolean onFire) {
+        entity.setOnFire(onFire);
+    }
+
     public boolean hasVehicle() {
         return entity.hasVehicle();
     }
@@ -595,12 +601,12 @@ public class Entity {
         return entity.canBeRiddenInWater();
     }
 
-    public void setSneaking(boolean sneaking) {
-        entity.setSneaking(sneaking);
-    }
-
     public boolean isSneaking() {
         return entity.isSneaking();
+    }
+
+    public void setSneaking(boolean sneaking) {
+        entity.setSneaking(sneaking);
     }
 
     public boolean bypassesSteppingEffects() {
@@ -635,6 +641,10 @@ public class Entity {
         return entity.isSwimming();
     }
 
+    public void setSwimming(boolean swimming) {
+        entity.setSwimming(swimming);
+    }
+
     public boolean isInSwimmingPose() {
         return entity.isInSwimmingPose();
     }
@@ -643,24 +653,24 @@ public class Entity {
         return entity.shouldLeaveSwimmingPose();
     }
 
-    public void setSwimming(boolean swimming) {
-        entity.setSwimming(swimming);
-    }
-
     public boolean isGlowingLocal() {
         return entity.isGlowingLocal();
-    }
-
-    public void setGlowing(boolean glowing) {
-        entity.setGlowing(glowing);
     }
 
     public boolean isGlowing() {
         return entity.isGlowing();
     }
 
+    public void setGlowing(boolean glowing) {
+        entity.setGlowing(glowing);
+    }
+
     public boolean isInvisible() {
         return entity.isInvisible();
+    }
+
+    public void setInvisible(boolean invisible) {
+        entity.setInvisible(invisible);
     }
 
     public boolean isInvisibleTo(PlayerEntity player) {
@@ -683,10 +693,6 @@ public class Entity {
 
     public boolean isTeamPlayer(AbstractTeam team) {
         return entity.isTeamPlayer(team);
-    }
-
-    public void setInvisible(boolean invisible) {
-        entity.setInvisible(invisible);
     }
 
     public int getMaxAir() {
@@ -822,12 +828,12 @@ public class Entity {
         return entity.doesRenderOnFire();
     }
 
-    public void setUuid(UUID uuid) {
-        entity.setUuid(uuid);
-    }
-
     public UUID getUuid() {
         return entity.getUuid();
+    }
+
+    public void setUuid(UUID uuid) {
+        entity.setUuid(uuid);
     }
 
     public String getUuidAsString() {
@@ -846,25 +852,25 @@ public class Entity {
         return entity.getDisplayName();
     }
 
-    public void setCustomName(@Nullable Text name) {
-        entity.setCustomName(name);
-    }
-
     @Nullable
     public Text getCustomName() {
         return entity.getCustomName();
+    }
+
+    public void setCustomName(@Nullable Text name) {
+        entity.setCustomName(name);
     }
 
     public boolean hasCustomName() {
         return entity.hasCustomName();
     }
 
-    public void setCustomNameVisible(boolean visible) {
-        entity.setCustomNameVisible(visible);
-    }
-
     public boolean isCustomNameVisible() {
         return entity.isCustomNameVisible();
+    }
+
+    public void setCustomNameVisible(boolean visible) {
+        entity.setCustomNameVisible(visible);
     }
 
     public void teleport(double destX, double destY, double destZ) {
@@ -907,12 +913,12 @@ public class Entity {
         return entity.getBoundingBox();
     }
 
-    public Box getVisibilityBoundingBox() {
-        return entity.getVisibilityBoundingBox();
-    }
-
     public void setBoundingBox(Box boundingBox) {
         entity.setBoundingBox(boundingBox);
+    }
+
+    public Box getVisibilityBoundingBox() {
+        return entity.getVisibilityBoundingBox();
     }
 
     public float getEyeHeight(EntityPose pose) {
@@ -1236,13 +1242,13 @@ public class Entity {
         return entity.isRemoved();
     }
 
+    public void setRemoved(net.minecraft.entity.Entity.RemovalReason reason) {
+        entity.setRemoved(reason);
+    }
+
     @Nullable
     public net.minecraft.entity.Entity.RemovalReason getRemovalReason() {
         return entity.getRemovalReason();
-    }
-
-    public void setRemoved(net.minecraft.entity.Entity.RemovalReason reason) {
-        entity.setRemoved(reason);
     }
 
     public void setListener(EntityChangeListener listener) {
@@ -1263,11 +1269,6 @@ public class Entity {
 
     public boolean cannotBeSilenced() {
         return entity.cannotBeSilenced();
-    }
-
-    private final net.minecraft.entity.Entity entity;
-    public Entity(net.minecraft.entity.Entity entity) {
-        this.entity = entity;
     }
 
     public String getNbt() {
