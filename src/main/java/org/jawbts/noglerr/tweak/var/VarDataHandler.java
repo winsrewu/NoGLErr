@@ -7,6 +7,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.tweak.Utils;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -20,7 +22,6 @@ public class VarDataHandler extends DataHandlerBase {
 
     private Entity vEntity;
     private ClientWorld vWorld;
-    private ClientPlayerEntity vPlayer;
 
     public VarDataHandler() {
         data.name = "unnamed";
@@ -32,22 +33,27 @@ public class VarDataHandler extends DataHandlerBase {
         data.value = Utils.escapeString(value);
     }
 
+    @Override
     public String getName() {
         return data.name;
     }
 
+    @Override
     public void setName(String name) {
         data.name = Utils.escapeString(name);
     }
 
+    @Override
     public String getData() {
         return data.value;
     }
 
+    @Override
     public void setData(String data) {
         this.data.value = Utils.escapeString(data);
     }
 
+    @Override
     public SavedData getSavedData() {
         return data;
     }
@@ -146,7 +152,7 @@ public class VarDataHandler extends DataHandlerBase {
                         }
                         cache = new StringBuilder();
                     }
-                } else if (state == 4) {
+                } else {
                     if (c == ']') {
                         state = 0;
                         argCache.add(new Arg(ArgType.OPERATOR, cache.toString()));
@@ -193,7 +199,6 @@ public class VarDataHandler extends DataHandlerBase {
     public String getTreatedData(Entity entity, ClientWorld world, ClientPlayerEntity player) {
         vEntity = entity;
         vWorld = world;
-        vPlayer = player;
 
         argListFailReason = null;
         createArgList();
@@ -257,6 +262,7 @@ public class VarDataHandler extends DataHandlerBase {
         return ans;
     }
 
+    @Override
     public String toString() {
         return String.format("Name: %s Value: %s", data.name, data.value);
     }
@@ -268,24 +274,25 @@ public class VarDataHandler extends DataHandlerBase {
             return Integer.parseInt(s);
         }
 
-        public static Long getLong(String s) {
+        public static @NotNull Long getLong(String s) {
             return Long.parseLong(s);
         }
 
-        public static Float getFloat(String s) {
+        public static @NotNull Float getFloat(String s) {
             return Float.parseFloat(s);
         }
 
-        public static Double getDouble(String s) {
+        public static @NotNull Double getDouble(String s) {
             return Double.parseDouble(s);
         }
 
-        public static Boolean getBoolean(String s) {
+        @Contract(pure = true)
+        public static @NotNull Boolean getBoolean(String s) {
             return Boolean.parseBoolean(s);
         }
     }
 
-    private class Arg {
+    class Arg {
         private final String value;
         private final boolean isVar;
         private final String varName;
@@ -317,6 +324,7 @@ public class VarDataHandler extends DataHandlerBase {
             return isVar;
         }
 
+        @Override
         public String toString() {
             return isVar ? type.name() + " " + varName : type.name() + " " + value;
         }

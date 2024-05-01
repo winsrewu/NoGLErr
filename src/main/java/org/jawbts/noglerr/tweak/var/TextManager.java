@@ -4,6 +4,7 @@ import org.jawbts.noglerr.config.Configs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TextManager implements DataManagerBase {
     private static final TextManager INSTANCE = new TextManager();
@@ -19,38 +20,37 @@ public class TextManager implements DataManagerBase {
     }
 
     public boolean addData(String name, String value, boolean hard) {
-        SavedData sd = getData(name);
-        if (sd != null) {
+        Optional<SavedData> sd = getData(name);
+        sd.ifPresentOrElse(savedData -> {
             if (hard) {
-                textDataHandlerList.remove(new TextDataHandler(sd.name, sd.value));
+                textDataHandlerList.remove(new TextDataHandler(savedData.name, savedData.value));
                 textDataHandlerList.add(new TextDataHandler(name, value));
                 onChanged();
-                return true;
             }
-            return false;
-        }
-        textDataHandlerList.add(new TextDataHandler(name, value));
-        onChanged();
-        return true;
+        }, () -> {
+            textDataHandlerList.add(new TextDataHandler(name, value));
+            onChanged();
+        });
+
+        return hard || sd.isEmpty();
     }
 
     public boolean delData(String name) {
-        SavedData sd = getData(name);
-        if (sd == null) {
-            return false;
-        }
-        textDataHandlerList.remove(new TextDataHandler(sd.name, sd.value));
-        onChanged();
-        return true;
+        Optional<SavedData> sd = getData(name);
+        sd.ifPresent(savedData -> {
+            textDataHandlerList.remove(new TextDataHandler(savedData.name, savedData.value));
+            onChanged();
+        });
+        return sd.isPresent();
     }
 
-    public SavedData getData(String name) {
+    public Optional<SavedData> getData(String name) {
         for (TextDataHandler data : textDataHandlerList) {
             if (data.getName().equals(name)) {
-                return data.getSavedData();
+                return Optional.of(data.getSavedData());
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public TextDataHandler getHandler(String name) {

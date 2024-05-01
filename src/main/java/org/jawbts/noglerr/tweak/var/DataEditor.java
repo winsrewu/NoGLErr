@@ -3,6 +3,7 @@ package org.jawbts.noglerr.tweak.var;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import org.jawbts.noglerr.util.PlayerMessageSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -80,21 +81,21 @@ public class DataEditor {
         return "Unknown";
     }
 
-    public void printDataList(PlayerMessageSender pms, int page) {
+    public void printDataList(@NotNull PlayerMessageSender pms, int page) {
         pms.add("yellow", "------");
         pms.add(String.format("%s List: ", getType()));
 
         assert dataManagerBase != null;
         List<SavedData> sd = dataManagerBase.getDataList();
 
-        int maxpage = sd.size() / 10;
-        page = Math.min(page - 1, maxpage);
-        int subpage = Math.min((page + 1) * 10, sd.size());
+        int maxPage = sd.size() / 10;
+        page = Math.min(page - 1, maxPage);
+        int subPage = Math.min((page + 1) * 10, sd.size());
 
-        pms.add(sd.subList(page * 10, subpage));
+        pms.add(sd.subList(page * 10, subPage));
 
         if (sd.size() > 10) {
-            pms.add(String.format("Page %d / %d", page + 1, maxpage + 1));
+            pms.add(String.format("Page %d / %d", page + 1, maxPage + 1));
         } else if (sd.isEmpty()) {
             pms.add("Nothing...");
         }

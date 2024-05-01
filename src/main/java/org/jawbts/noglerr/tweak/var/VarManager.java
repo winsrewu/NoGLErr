@@ -4,6 +4,7 @@ import org.jawbts.noglerr.config.Configs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class VarManager implements DataManagerBase {
     private static final VarManager INSTANCE = new VarManager();
@@ -19,38 +20,37 @@ public class VarManager implements DataManagerBase {
     }
 
     public boolean addData(String name, String value, boolean hard) {
-        SavedData sd = getData(name);
-        if (sd != null) {
+        Optional<SavedData> sd = getData(name);
+        sd.ifPresentOrElse(savedData -> {
             if (hard) {
-                varDataHandlerList.remove(new VarDataHandler(sd.name, sd.value));
+                varDataHandlerList.remove(new VarDataHandler(savedData.name, savedData.value));
                 varDataHandlerList.add(new VarDataHandler(name, value));
                 onChanged();
-                return true;
             }
-            return false;
-        }
-        varDataHandlerList.add(new VarDataHandler(name, value));
-        onChanged();
-        return true;
+        }, () -> {
+            varDataHandlerList.add(new VarDataHandler(name, value));
+            onChanged();
+        });
+
+        return hard || sd.isEmpty();
     }
 
     public boolean delData(String name) {
-        SavedData sd = getData(name);
-        if (sd == null) {
-            return false;
-        }
-        varDataHandlerList.remove(new VarDataHandler(sd.name, sd.value));
-        onChanged();
-        return true;
+        Optional<SavedData> sd = getData(name);
+        sd.ifPresent(savedData -> {
+            varDataHandlerList.remove(new VarDataHandler(savedData.name, savedData.value));
+            onChanged();
+        });
+        return sd.isPresent();
     }
 
-    public SavedData getData(String name) {
+    public Optional<SavedData> getData(String name) {
         for (VarDataHandler data : varDataHandlerList) {
             if (data.getName().equals(name)) {
-                return data.getSavedData();
+                return Optional.ofNullable(data.getSavedData());
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public VarDataHandler getHandler(String name) {

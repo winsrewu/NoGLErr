@@ -5,6 +5,7 @@ import org.jawbts.noglerr.event.VarEntityHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TargetManager implements DataManagerBase {
     private static final TargetManager INSTANCE = new TargetManager();
@@ -20,46 +21,45 @@ public class TargetManager implements DataManagerBase {
     }
 
     public boolean addData(String name, String value, boolean hard) {
-        SavedData sd = getData(name);
-        if (sd != null) {
+        Optional<SavedData> sd = getData(name);
+        sd.ifPresentOrElse(savedData -> {
             if (hard) {
-                targetDataHandlerList.remove(new TargetDataHandler(sd.name, sd.value));
+                targetDataHandlerList.remove(new TargetDataHandler(savedData.name, savedData.value));
                 targetDataHandlerList.add(new TargetDataHandler(name, value));
                 onChanged();
-                return true;
             }
-            return false;
-        }
-        targetDataHandlerList.add(new TargetDataHandler(name, value));
-        onChanged();
-        return true;
+        }, () -> {
+            targetDataHandlerList.add(new TargetDataHandler(name, value));
+            onChanged();
+        });
+
+        return hard || sd.isEmpty();
     }
 
     public boolean delData(String name) {
-        onChanged();
-        SavedData sd = getData(name);
-        if (sd == null) {
-            return false;
-        }
-        targetDataHandlerList.remove(new TargetDataHandler(sd.name, sd.value));
-        return true;
+        Optional<SavedData> sd = getData(name);
+        sd.ifPresent(savedData -> {
+            targetDataHandlerList.remove(new TargetDataHandler(savedData.name, savedData.value));
+            onChanged();
+        });
+        return sd.isPresent();
     }
 
-    public SavedData getData(String name) {
+    public Optional<SavedData> getData(String name) {
         for (TargetDataHandler data : targetDataHandlerList) {
             if (data.getName().equals(name)) {
-                return data.getSavedData();
+                return Optional.of(data.getSavedData());
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     public void setData(List<SavedData> savedDataList) {
-        onChanged();
         targetDataHandlerList.clear();
         for (SavedData sd : savedDataList) {
             targetDataHandlerList.add(new TargetDataHandler(sd.name, sd.value));
         }
+        onChanged();
     }
 
     public List<SavedData> getDataList() {

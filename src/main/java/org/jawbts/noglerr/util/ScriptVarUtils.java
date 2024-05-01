@@ -1,16 +1,16 @@
 package org.jawbts.noglerr.util;
 
+import net.minecraft.util.Util;
 import org.jawbts.noglerr.client.NoglerrClient;
+import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 
 public class ScriptVarUtils {
     private static final File CONFIG_DIR = new File("./config/noglerr/var_scripts");
 
-    public static File getConfigDir() {
+    public static @Nullable File getConfigDir() {
         if ((CONFIG_DIR.exists() && CONFIG_DIR.isDirectory()) || CONFIG_DIR.mkdirs())
             return CONFIG_DIR;
         NoglerrClient.LOGGER.error("Error while opening folder. '{}", CONFIG_DIR.getAbsolutePath());
@@ -25,16 +25,7 @@ public class ScriptVarUtils {
     }
 
     public static boolean openFolder() {
-        try {
-            // TODO support other system besides Windows
-            Runtime.getRuntime().exec("explorer " + Objects.requireNonNull(getConfigDir()).getAbsolutePath());
-
-            // it's headless mod, don't use it.
-            // Desktop.getDesktop().open(getConfigDir());
-        } catch (IOException e) {
-            NoglerrClient.LOGGER.error("Err while opening folder. '{}", CONFIG_DIR.getAbsolutePath(), e);
-            return false;
-        }
+        Util.getOperatingSystem().open(getConfigDir());
         return true;
     }
 }

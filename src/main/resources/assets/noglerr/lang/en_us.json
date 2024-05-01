@@ -17,13 +17,11 @@
   "noglerr.command.versionInfoNotReady": "Version info not ready. Do '/noglerr version check' first.",
   "noglerr.command.versionInfo": "Current branch: %s , Current version: %s , Latest version: %s , Lowest safe version: %s",
   "noglerr.command.cannotOpenFolder": "Error while opening folder. Check log for details.",
-
   "noglerr.gui.title": "NoGLErr",
   "noglerr.gui.title.generic": "Generic",
   "noglerr.gui.title.toggleHotkeys": "Toggle Hotkeys",
   "noglerr.gui.title.detailed": "Detailed Config",
   "noglerr.gui.title.toggles": "Toggles",
-
   "noglerr.comments.gui.openConfigScreen": "Open the in-game noglerr config screen",
   "noglerr.comments.gui.showVisualEffects": "Show visual effects",
   "noglerr.comments.gui.showEntityDetailConfig": "Config json",
@@ -37,7 +35,6 @@
   "noglerr.comments.gui.enableAutoUpdateCheck": "If enabled, will automatically check for updates when the game starts. Recommended.",
   "noglerr.comments.gui.silentUpdate": "Only notify you when in case of emergency. Recommended.",
   "noglerr.comments.gui.voiceToTextFormat": "Voice to text format",
-
   "noglerr.tweaks.showEntityDetailConfig": "ShowEntityDetailConfig",
   "noglerr.tweaks.showVFX": "ShowVFX",
   "noglerr.tweaks.showEntityDetail": "ShowEntityDetail",
@@ -51,7 +48,6 @@
   "noglerr.tweaks.microphoneSwitch": "Microphone",
   "noglerr.tweaks.enableAutoUpdateCheck": "Enable Auto Update Check",
   "noglerr.tweaks.silentUpdateCheck": "Silent Update Check",
-
   "noglerr.info.versionOutDated": "Your Noglerr version is out dated.",
   "noglerr.info.versionNotSafe": "Your Noglerr version is not safe",
   "noglerr.info.checkUrl": "Please check this url: ",
@@ -59,6 +55,6 @@
   "noglerr.info.safeVersionNotReady": "Safe version not ready yet. Please disable your mod for now.",
   "noglerr.info.checkFiled": "Check failed, check your log for further information.",
   "noglerr.info.versionPerfect": "Noglerr at latest safe version.",
-
+  "noglerr.info.folderOpenFailed": "The folder could not be opened. Please open it manually.",
   "noglerr.hotkeys.openConfigScreen": "OpenConfigScreen"
 }
