@@ -69,7 +69,8 @@ public class TextDataHandler extends DataHandlerBase {
                 handler = ScriptVarManager.getInstance().getHandler(name);
             }
             if (handler == null) {
-                argListFailReason = Text.Serializer.toJson(Utils.createText("noglerr.command.varNotExists", "red"));
+                // TODO argListFailReason = Text.Serializer.toJson(Utils.createText("noglerr.command.varNotExists", "red"));
+                argListFailReason = "";
             }
             argList.add(handler);
         }

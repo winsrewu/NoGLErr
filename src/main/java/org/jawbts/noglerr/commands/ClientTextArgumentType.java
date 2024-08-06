@@ -18,7 +18,8 @@ import java.util.Collection;
 public class ClientTextArgumentType implements ArgumentType<Text> {
     public static final DynamicCommandExceptionType INVALID_COMPONENT_EXCEPTION = new DynamicCommandExceptionType(text -> Text.stringifiedTranslatable("argument.component.invalid", text));
     private static final Collection<String> EXAMPLES = Arrays.asList("\"hello world\"", "\"\"", "\"{\"text\":\"hello world\"}", "[\"\"]");
-    private final RegistryWrapper.WrapperLookup registryLookup;
+    // TODO
+    private final RegistryWrapper.WrapperLookup registryLookup = null;
 
     private ClientTextArgumentType() {
     }

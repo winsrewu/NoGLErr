@@ -143,17 +143,19 @@ public class ClientEntitySelector {
     }
 
     private Predicate<Entity> getPositionPredicate(Vec3d vec3d) {
-        Predicate<Entity> predicate = basePredicate;
-        if (box != null) {
-            Box box = this.box.offset(vec3d);
-            predicate = predicate.and(entity -> box.intersects(entity.getBoundingBox()));
-        }
-
-        if (!distance.isDummy()) {
-            predicate = predicate.and(entity -> this.distance.testSqrt(entity.squaredDistanceTo(vec3d)));
-        }
-
-        return predicate;
+        // TODO
+        throw new UnsupportedOperationException();
+//        Predicate<Entity> predicate = predicates;
+//        if (box != null) {
+//            Box box = this.box.offset(vec3d);
+//            predicate = predicate.and(entity -> box.intersects(entity.getBoundingBox()));
+//        }
+//
+//        if (!distance.isDummy()) {
+//            predicate = predicate.and(entity -> this.distance.testSqrt(entity.squaredDistanceTo(vec3d)));
+//        }
+//
+//        return predicate;
     }
 
     private void appendEntitiesFromWorld(List<Entity> list, ClientWorld clientWorld, Vec3d vec3d, Predicate<Entity> predicate) {
