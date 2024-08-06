@@ -53,7 +53,11 @@ world.time是long型, 必须$world.time$ + 1L
 还可以使用 /showvar script folder 打开脚本文件夹(只支持windows)  
 里面创建一个(多个也行)以.js结尾的文件, 里面使用javascript注册一个函数, 比如叫test  
 那么可以使用$test$调用该函数  
-记得更改后使用 /showvar script reload 刷新
+同时, 你也可以使用/showvar script call (函数名称]) (参数列表)来调用  
+记得更改后使用 /showvar script reload 刷新  
+函数默认传入两个参数, 第一个是entity, 调用该函数的实体, 如果用指令调用, 则是玩家,
+第二个是utils, 就是工具集. 请你自己去github翻翻看里面有什么. 
+在 org.jawbts.noglerr.tweak.var.javascript 里面.    
 
 
 支持的变量列表:  
