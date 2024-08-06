@@ -1,5 +1,5 @@
 {
-  "noglerr.command.help": "NoGLErr! Please check github.com/winner32/noglerr",
+  "noglerr.command.help": "NoGLErr! Please check github.com/winsrewu/noglerr",
   "noglerr.commend.configChanged": "Noglerr: Config Changed!",
   "noglerr.command.nameAlreadyExists": "This name already exists!",
   "noglerr.command.nameNotExists": "This name doesn't exist!",

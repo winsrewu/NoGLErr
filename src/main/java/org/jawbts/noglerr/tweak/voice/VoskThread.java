@@ -1,5 +1,6 @@
 package org.jawbts.noglerr.tweak.voice;
 
+import org.jawbts.noglerr.client.NoglerrClient;
 import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.tweak.Utils;
 import org.jawbts.noglerr.util.MicrophoneManager;
@@ -128,6 +129,7 @@ public class VoskThread extends Thread {
             try {
                 proRun();
             } catch (IOException e) {
+                NoglerrClient.LOGGER.error("ERROR in VoskThread", e);
                 PlayerMessageSender.getInstance().add("noglerr.command.modelNotReady");
                 Configs.Toggles.VOICE_TO_TEXT.setBooleanValue(false);
                 needClose = true;

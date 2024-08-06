@@ -1,5 +1,5 @@
 {
-  "noglerr.command.help": "NoGLErr! 用法请看 github.com/winner32/noglerr",
+  "noglerr.command.help": "NoGLErr! 用法请看 github.com/winsrewu/noglerr",
   "noglerr.commend.configChanged": "Noglerr: 配置文件改变",
   "noglerr.command.nameAlreadyExists": "这个名称已经存在了!",
   "noglerr.command.nameNotExists": "这个名称不存在!",

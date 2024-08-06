@@ -61,6 +61,7 @@ public class Vosk {
         folder.mkdir();
     }
 
+    // TODO 这里会爆null, 记得修
     public void reload() {
         voskThread.needReload();
     }
