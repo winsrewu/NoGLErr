@@ -16,4 +16,10 @@ public class Utils {
     public World getWorld() {
         return new World(ClientTickHandler.mc.world);
     }
+
+    public boolean sendMesToPublic(String s) {
+        if (ClientTickHandler.mc.player == null) return false;
+        ClientTickHandler.mc.player.sendChatMessage(s);
+        return true;
+    }
 }

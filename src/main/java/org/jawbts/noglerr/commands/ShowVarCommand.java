@@ -113,6 +113,25 @@ public class ShowVarCommand {
                                             return 0;
                                         })
                                 )
+                                .then(literal("call")
+                                        .then(argument("Name", StringArgumentType.string())
+                                                .executes(context -> {
+                                                    pms.add(ScriptVarManager.getInstance().callFunction(
+                                                            StringArgumentType.getString(context, "Name")
+                                                    ));
+                                                    return 1;
+                                                })
+                                                .then(argument("Args", StringArgumentType.greedyString())
+                                                    .executes(context -> {
+                                                        pms.add(ScriptVarManager.getInstance().callFunction(
+                                                            StringArgumentType.getString(context, "Name"),
+                                                            (Object[]) StringArgumentType.getString(context, "Args").split(" ")
+                                                        ));
+                                                        return 1;
+                                                    })
+                                                )
+                                        )
+                                )
                         )
         );
     }

@@ -2,6 +2,7 @@ package org.jawbts.noglerr.tweak.var;
 
 import net.minecraft.entity.Entity;
 import org.jawbts.noglerr.client.NoglerrClient;
+import org.jawbts.noglerr.event.ClientTickHandler;
 import org.jawbts.noglerr.tweak.var.javascript.Utils;
 import org.jawbts.noglerr.util.PlayerMessageSender;
 import org.jawbts.noglerr.util.ScriptVarUtils;
@@ -51,5 +52,21 @@ public class ScriptVarManager {
                 new org.jawbts.noglerr.tweak.var.javascript.proxy.Entity(entity),
                 new Utils()
         ).toString();
+    }
+
+    public String callFunction(String name, Object... args) {
+        try {
+            ((Invocable) engine).invokeFunction(
+                    name,
+                    new org.jawbts.noglerr.tweak.var.javascript.proxy.Entity(ClientTickHandler.player),
+                    new Utils(),
+                    args
+            );
+            return "Success";
+        } catch (ScriptException e) {
+            return e.getMessage();
+        } catch (NoSuchMethodException e) {
+            return "noglerr.command.nameNotExists";
+        }
     }
 }
