@@ -1,29 +1,41 @@
 package org.jawbts.noglerr.tweak.var.javascript.proxy;
 
+
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Portal;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.StackReference;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.scoreboard.AbstractTeam;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.EntityTrackerEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.tag.Tag;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
@@ -32,27 +44,28 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.BlockLocating;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import net.minecraft.world.entity.EntityChangeListener;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.explosion.Explosion;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 public class Entity {
-    private final net.minecraft.entity.Entity entity;
-
-    public Entity(net.minecraft.entity.Entity entity) {
-        this.entity = entity;
-    }
-
     public boolean collidesWithStateAtPos(BlockPos pos, BlockState state) {
         return entity.collidesWithStateAtPos(pos, state);
     }
@@ -73,11 +86,7 @@ public class Entity {
         entity.updateTrackedPosition(x, y, z);
     }
 
-    public void updateTrackedPosition(Vec3d pos) {
-        entity.updateTrackedPosition(pos);
-    }
-
-    public Vec3d getTrackedPosition() {
+    public TrackedPosition getTrackedPosition() {
         return entity.getTrackedPosition();
     }
 
@@ -93,16 +102,16 @@ public class Entity {
         entity.setId(id);
     }
 
-    public Set<String> getScoreboardTags() {
-        return entity.getScoreboardTags();
+    public Set<String> getCommandTags() {
+        return entity.getCommandTags();
     }
 
-    public boolean addScoreboardTag(String tag) {
-        return entity.addScoreboardTag(tag);
+    public boolean addCommandTag(String tag) {
+        return entity.addCommandTag(tag);
     }
 
-    public boolean removeScoreboardTag(String tag) {
-        return entity.removeScoreboardTag(tag);
+    public boolean removeCommandTag(String tag) {
+        return entity.removeCommandTag(tag);
     }
 
     public void kill() {
@@ -125,16 +134,24 @@ public class Entity {
         entity.onRemoved();
     }
 
-    public EntityPose getPose() {
-        return entity.getPose();
-    }
-
     public void setPose(EntityPose pose) {
         entity.setPose(pose);
     }
 
-    public boolean isInRange(net.minecraft.entity.Entity other, double radius) {
-        return entity.isInRange(other, radius);
+    public EntityPose getPose() {
+        return entity.getPose();
+    }
+
+    public boolean isInPose(EntityPose pose) {
+        return entity.isInPose(pose);
+    }
+
+    public boolean isInRange(net.minecraft.entity.Entity entity, double radius) {
+        return this.entity.isInRange(entity, radius);
+    }
+
+    public boolean isInRange(net.minecraft.entity.Entity entity, double horizontalRadius, double verticalRadius) {
+        return this.entity.isInRange(entity, horizontalRadius, verticalRadius);
     }
 
     public void setPosition(Vec3d pos) {
@@ -157,36 +174,48 @@ public class Entity {
         entity.baseTick();
     }
 
+    public void setOnFire(boolean onFire) {
+        entity.setOnFire(onFire);
+    }
+
     public void attemptTickInVoid() {
         entity.attemptTickInVoid();
     }
 
-    public void resetNetherPortalCooldown() {
-        entity.resetNetherPortalCooldown();
+    public void resetPortalCooldown() {
+        entity.resetPortalCooldown();
     }
 
-    public boolean hasNetherPortalCooldown() {
-        return entity.hasNetherPortalCooldown();
+    public void setPortalCooldown(int portalCooldown) {
+        entity.setPortalCooldown(portalCooldown);
     }
 
-    public int getMaxNetherPortalTime() {
-        return entity.getMaxNetherPortalTime();
+    public int getPortalCooldown() {
+        return entity.getPortalCooldown();
+    }
+
+    public boolean hasPortalCooldown() {
+        return entity.hasPortalCooldown();
     }
 
     public void setOnFireFromLava() {
         entity.setOnFireFromLava();
     }
 
-    public void setOnFireFor(int seconds) {
+    public void setOnFireFor(float seconds) {
         entity.setOnFireFor(seconds);
+    }
+
+    public void setOnFireForTicks(int ticks) {
+        entity.setOnFireForTicks(ticks);
+    }
+
+    public void setFireTicks(int fireTicks) {
+        entity.setFireTicks(fireTicks);
     }
 
     public int getFireTicks() {
         return entity.getFireTicks();
-    }
-
-    public void setFireTicks(int ticks) {
-        entity.setFireTicks(ticks);
     }
 
     public void extinguish() {
@@ -197,40 +226,61 @@ public class Entity {
         return entity.doesNotCollide(offsetX, offsetY, offsetZ);
     }
 
-    public boolean isOnGround() {
-        return entity.isOnGround();
-    }
-
     public void setOnGround(boolean onGround) {
         entity.setOnGround(onGround);
+    }
+
+    public void setOnGround(boolean onGround, Vec3d movement) {
+        entity.setOnGround(onGround, movement);
+    }
+
+    public boolean isSupportedBy(BlockPos pos) {
+        return entity.isSupportedBy(pos);
+    }
+
+    public boolean isOnGround() {
+        return entity.isOnGround();
     }
 
     public void move(MovementType movementType, Vec3d movement) {
         entity.move(movementType, movement);
     }
 
+    public void extinguishWithSound() {
+        entity.extinguishWithSound();
+    }
+
+    @Deprecated
     public BlockPos getLandingPos() {
         return entity.getLandingPos();
     }
 
-    public void emitGameEvent(GameEvent event, @Nullable net.minecraft.entity.Entity entity, BlockPos pos) {
-        this.entity.emitGameEvent(event, entity, pos);
+    public BlockPos getVelocityAffectingPos() {
+        return entity.getVelocityAffectingPos();
     }
 
-    public void emitGameEvent(GameEvent event, @Nullable net.minecraft.entity.Entity entity) {
+    public BlockPos getSteppingPos() {
+        return entity.getSteppingPos();
+    }
+
+    public BlockPos getWorldSpawnPos(ServerWorld world, BlockPos basePos) {
+        return entity.getWorldSpawnPos(world, basePos);
+    }
+
+    public void emitGameEvent(RegistryEntry<GameEvent> event, @Nullable net.minecraft.entity.Entity entity) {
         this.entity.emitGameEvent(event, entity);
     }
 
-    public void emitGameEvent(GameEvent event, BlockPos pos) {
-        entity.emitGameEvent(event, pos);
-    }
-
-    public void emitGameEvent(GameEvent event) {
+    public void emitGameEvent(RegistryEntry<GameEvent> event) {
         entity.emitGameEvent(event);
     }
 
     public void playSound(SoundEvent sound, float volume, float pitch) {
         entity.playSound(sound, volume, pitch);
+    }
+
+    public void playSoundIfNotSilent(SoundEvent event) {
+        entity.playSoundIfNotSilent(event);
     }
 
     public boolean isSilent() {
@@ -247,6 +297,10 @@ public class Entity {
 
     public void setNoGravity(boolean noGravity) {
         entity.setNoGravity(noGravity);
+    }
+
+    public double getFinalGravity() {
+        return entity.getFinalGravity();
     }
 
     public boolean occludeVibrationSignals() {
@@ -277,6 +331,10 @@ public class Entity {
         return entity.isInsideWaterOrBubbleColumn();
     }
 
+    public boolean isInFluid() {
+        return entity.isInFluid();
+    }
+
     public boolean isSubmergedInWater() {
         return entity.isSubmergedInWater();
     }
@@ -285,11 +343,15 @@ public class Entity {
         entity.updateSwimming();
     }
 
+    public BlockState getSteppingBlockState() {
+        return entity.getSteppingBlockState();
+    }
+
     public boolean shouldSpawnSprintingParticles() {
         return entity.shouldSpawnSprintingParticles();
     }
 
-    public boolean isSubmergedIn(Tag<Fluid> fluidTag) {
+    public boolean isSubmergedIn(TagKey<Fluid> fluidTag) {
         return entity.isSubmergedIn(fluidTag);
     }
 
@@ -301,12 +363,17 @@ public class Entity {
         entity.updateVelocity(speed, movementInput);
     }
 
+    @Deprecated
     public float getBrightnessAtEyes() {
         return entity.getBrightnessAtEyes();
     }
 
     public void updatePositionAndAngles(double x, double y, double z, float yaw, float pitch) {
         entity.updatePositionAndAngles(x, y, z, yaw, pitch);
+    }
+
+    public void setAngles(float yaw, float pitch) {
+        entity.setAngles(yaw, pitch);
     }
 
     public void updatePosition(double x, double y, double z) {
@@ -322,6 +389,10 @@ public class Entity {
     }
 
     public void refreshPositionAndAngles(BlockPos pos, float yaw, float pitch) {
+        entity.refreshPositionAndAngles(pos, yaw, pitch);
+    }
+
+    public void refreshPositionAndAngles(Vec3d pos, float yaw, float pitch) {
         entity.refreshPositionAndAngles(pos, yaw, pitch);
     }
 
@@ -357,6 +428,10 @@ public class Entity {
         this.entity.pushAwayFrom(entity);
     }
 
+    public void addVelocity(Vec3d velocity) {
+        entity.addVelocity(velocity);
+    }
+
     public void addVelocity(double deltaX, double deltaY, double deltaZ) {
         entity.addVelocity(deltaX, deltaY, deltaZ);
     }
@@ -369,12 +444,20 @@ public class Entity {
         return entity.getRotationVec(tickDelta);
     }
 
+    public Direction getFacing() {
+        return entity.getFacing();
+    }
+
     public float getPitch(float tickDelta) {
         return entity.getPitch(tickDelta);
     }
 
     public float getYaw(float tickDelta) {
         return entity.getYaw(tickDelta);
+    }
+
+    public Vec3d getRotationVector(float pitch, float yaw) {
+        return entity.getRotationVector(pitch, yaw);
     }
 
     public Vec3d getOppositeRotationVector(float tickDelta) {
@@ -401,16 +484,20 @@ public class Entity {
         return entity.raycast(maxDistance, tickDelta, includeFluids);
     }
 
-    public boolean collides() {
-        return entity.collides();
+    public boolean canBeHitByProjectile() {
+        return entity.canBeHitByProjectile();
+    }
+
+    public boolean canHit() {
+        return entity.canHit();
     }
 
     public boolean isPushable() {
         return entity.isPushable();
     }
 
-    public void updateKilledAdvancementCriterion(net.minecraft.entity.Entity killer, int score, DamageSource damageSource) {
-        entity.updateKilledAdvancementCriterion(killer, score, damageSource);
+    public void updateKilledAdvancementCriterion(net.minecraft.entity.Entity entityKilled, int score, DamageSource damageSource) {
+        entity.updateKilledAdvancementCriterion(entityKilled, score, damageSource);
     }
 
     public boolean shouldRender(double cameraX, double cameraY, double cameraZ) {
@@ -489,12 +576,12 @@ public class Entity {
         entity.onPassengerLookAround(passenger);
     }
 
-    public double getHeightOffset() {
-        return entity.getHeightOffset();
+    public Vec3d getVehicleAttachmentPos(net.minecraft.entity.Entity vehicle) {
+        return entity.getVehicleAttachmentPos(vehicle);
     }
 
-    public double getMountedHeightOffset() {
-        return entity.getMountedHeightOffset();
+    public Vec3d getPassengerRidingPos(net.minecraft.entity.Entity passenger) {
+        return entity.getPassengerRidingPos(passenger);
     }
 
     public boolean startRiding(net.minecraft.entity.Entity entity) {
@@ -521,8 +608,28 @@ public class Entity {
         entity.stopRiding();
     }
 
-    public void updateTrackedPositionAndAngles(double x, double y, double z, float yaw, float pitch, int interpolationSteps, boolean interpolate) {
-        entity.updateTrackedPositionAndAngles(x, y, z, yaw, pitch, interpolationSteps, interpolate);
+    public void updateTrackedPositionAndAngles(double x, double y, double z, float yaw, float pitch, int interpolationSteps) {
+        entity.updateTrackedPositionAndAngles(x, y, z, yaw, pitch, interpolationSteps);
+    }
+
+    public double getLerpTargetX() {
+        return entity.getLerpTargetX();
+    }
+
+    public double getLerpTargetY() {
+        return entity.getLerpTargetY();
+    }
+
+    public double getLerpTargetZ() {
+        return entity.getLerpTargetZ();
+    }
+
+    public float getLerpTargetPitch() {
+        return entity.getLerpTargetPitch();
+    }
+
+    public float getLerpTargetYaw() {
+        return entity.getLerpTargetYaw();
     }
 
     public void updateTrackedHeadRotation(float yaw, int interpolationSteps) {
@@ -537,6 +644,10 @@ public class Entity {
         return entity.getRotationVector();
     }
 
+    public Vec3d getHandPosOffset(Item item) {
+        return entity.getHandPosOffset(item);
+    }
+
     public Vec2f getRotationClient() {
         return entity.getRotationClient();
     }
@@ -545,48 +656,32 @@ public class Entity {
         return entity.getRotationVecClient();
     }
 
-    public void setInNetherPortal(BlockPos pos) {
-        entity.setInNetherPortal(pos);
+    public void tryUsePortal(Portal portal, BlockPos pos) {
+        entity.tryUsePortal(portal, pos);
     }
 
-    public int getDefaultNetherPortalCooldown() {
-        return entity.getDefaultNetherPortalCooldown();
+    public int getDefaultPortalCooldown() {
+        return entity.getDefaultPortalCooldown();
     }
 
     public void setVelocityClient(double x, double y, double z) {
         entity.setVelocityClient(x, y, z);
     }
 
+    public void onDamaged(DamageSource damageSource) {
+        entity.onDamaged(damageSource);
+    }
+
     public void handleStatus(byte status) {
         entity.handleStatus(status);
     }
 
-    public void animateDamage() {
-        entity.animateDamage();
-    }
-
-    public Iterable<ItemStack> getItemsHand() {
-        return entity.getItemsHand();
-    }
-
-    public Iterable<ItemStack> getArmorItems() {
-        return entity.getArmorItems();
-    }
-
-    public Iterable<ItemStack> getItemsEquipped() {
-        return entity.getItemsEquipped();
-    }
-
-    public void equipStack(EquipmentSlot slot, ItemStack stack) {
-        entity.equipStack(slot, stack);
+    public void animateDamage(float yaw) {
+        entity.animateDamage(yaw);
     }
 
     public boolean isOnFire() {
         return entity.isOnFire();
-    }
-
-    public void setOnFire(boolean onFire) {
-        entity.setOnFire(onFire);
     }
 
     public boolean hasVehicle() {
@@ -597,16 +692,20 @@ public class Entity {
         return entity.hasPassengers();
     }
 
-    public boolean canBeRiddenInWater() {
-        return entity.canBeRiddenInWater();
+    public boolean shouldDismountUnderwater() {
+        return entity.shouldDismountUnderwater();
     }
 
-    public boolean isSneaking() {
-        return entity.isSneaking();
+    public boolean shouldControlVehicles() {
+        return entity.shouldControlVehicles();
     }
 
     public void setSneaking(boolean sneaking) {
         entity.setSneaking(sneaking);
+    }
+
+    public boolean isSneaking() {
+        return entity.isSneaking();
     }
 
     public boolean bypassesSteppingEffects() {
@@ -641,49 +740,48 @@ public class Entity {
         return entity.isSwimming();
     }
 
-    public void setSwimming(boolean swimming) {
-        entity.setSwimming(swimming);
-    }
-
     public boolean isInSwimmingPose() {
         return entity.isInSwimmingPose();
     }
 
-    public boolean shouldLeaveSwimmingPose() {
-        return entity.shouldLeaveSwimmingPose();
+    public boolean isCrawling() {
+        return entity.isCrawling();
+    }
+
+    public void setSwimming(boolean swimming) {
+        entity.setSwimming(swimming);
     }
 
     public boolean isGlowingLocal() {
         return entity.isGlowingLocal();
     }
 
-    public boolean isGlowing() {
-        return entity.isGlowing();
-    }
-
     public void setGlowing(boolean glowing) {
         entity.setGlowing(glowing);
+    }
+
+    public boolean isGlowing() {
+        return entity.isGlowing();
     }
 
     public boolean isInvisible() {
         return entity.isInvisible();
     }
 
-    public void setInvisible(boolean invisible) {
-        entity.setInvisible(invisible);
-    }
-
     public boolean isInvisibleTo(PlayerEntity player) {
         return entity.isInvisibleTo(player);
     }
 
-    @Nullable
-    public EntityGameEventHandler getGameEventHandler() {
-        return entity.getGameEventHandler();
+    public boolean isOnRail() {
+        return entity.isOnRail();
+    }
+
+    public void updateEventHandler(BiConsumer<EntityGameEventHandler<?>, ServerWorld> callback) {
+        entity.updateEventHandler(callback);
     }
 
     @Nullable
-    public AbstractTeam getScoreboardTeam() {
+    public Team getScoreboardTeam() {
         return entity.getScoreboardTeam();
     }
 
@@ -693,6 +791,10 @@ public class Entity {
 
     public boolean isTeamPlayer(AbstractTeam team) {
         return entity.isTeamPlayer(team);
+    }
+
+    public void setInvisible(boolean invisible) {
+        entity.setInvisible(invisible);
     }
 
     public int getMaxAir() {
@@ -719,8 +821,8 @@ public class Entity {
         return entity.getFreezingScale();
     }
 
-    public boolean isFreezing() {
-        return entity.isFreezing();
+    public boolean isFrozen() {
+        return entity.isFrozen();
     }
 
     public int getMinFreezeDamageTicks() {
@@ -739,8 +841,16 @@ public class Entity {
         entity.onBubbleColumnCollision(drag);
     }
 
-    public void onKilledOther(ServerWorld world, LivingEntity other) {
-        entity.onKilledOther(world, other);
+    public boolean onKilledOther(ServerWorld world, LivingEntity other) {
+        return entity.onKilledOther(world, other);
+    }
+
+    public void limitFallDistance() {
+        entity.limitFallDistance();
+    }
+
+    public void onLanding() {
+        entity.onLanding();
     }
 
     public void slowMovement(BlockState state, Vec3d multiplier) {
@@ -796,12 +906,24 @@ public class Entity {
     }
 
     @Nullable
-    public net.minecraft.entity.Entity moveToWorld(ServerWorld destination) {
-        return entity.moveToWorld(destination);
+    public net.minecraft.entity.Entity teleportTo(TeleportTarget teleportTarget) {
+        return entity.teleportTo(teleportTarget);
     }
 
-    public boolean canUsePortals() {
-        return entity.canUsePortals();
+    public void addPortalChunkTicketAt(BlockPos pos) {
+        entity.addPortalChunkTicketAt(pos);
+    }
+
+    public Vec3d positionInPortal(Direction.Axis portalAxis, BlockLocating.Rectangle portalRect) {
+        return entity.positionInPortal(portalAxis, portalRect);
+    }
+
+    public boolean canUsePortals(boolean allowVehicles) {
+        return entity.canUsePortals(allowVehicles);
+    }
+
+    public boolean canTeleportBetween(World from, World to) {
+        return entity.canTeleportBetween(from, to);
     }
 
     public float getEffectiveExplosionResistance(Explosion explosion, BlockView world, BlockPos pos, BlockState blockState, FluidState fluidState, float max) {
@@ -828,20 +950,20 @@ public class Entity {
         return entity.doesRenderOnFire();
     }
 
-    public UUID getUuid() {
-        return entity.getUuid();
-    }
-
     public void setUuid(UUID uuid) {
         entity.setUuid(uuid);
+    }
+
+    public UUID getUuid() {
+        return entity.getUuid();
     }
 
     public String getUuidAsString() {
         return entity.getUuidAsString();
     }
 
-    public String getEntityName() {
-        return entity.getEntityName();
+    public String getNameForScoreboard() {
+        return entity.getNameForScoreboard();
     }
 
     public boolean isPushedByFluids() {
@@ -852,29 +974,29 @@ public class Entity {
         return entity.getDisplayName();
     }
 
+    public void setCustomName(@Nullable Text name) {
+        entity.setCustomName(name);
+    }
+
     @Nullable
     public Text getCustomName() {
         return entity.getCustomName();
-    }
-
-    public void setCustomName(@Nullable Text name) {
-        entity.setCustomName(name);
     }
 
     public boolean hasCustomName() {
         return entity.hasCustomName();
     }
 
-    public boolean isCustomNameVisible() {
-        return entity.isCustomNameVisible();
-    }
-
     public void setCustomNameVisible(boolean visible) {
         entity.setCustomNameVisible(visible);
     }
 
-    public void teleport(double destX, double destY, double destZ) {
-        entity.teleport(destX, destY, destZ);
+    public boolean isCustomNameVisible() {
+        return entity.isCustomNameVisible();
+    }
+
+    public boolean teleport(ServerWorld world, double destX, double destY, double destZ, Set<PositionFlag> flags, float yaw, float pitch) {
+        return entity.teleport(world, destX, destY, destZ, flags, yaw, pitch);
     }
 
     public void requestTeleportAndDismount(double destX, double destY, double destZ) {
@@ -885,8 +1007,16 @@ public class Entity {
         entity.requestTeleport(destX, destY, destZ);
     }
 
+    public void requestTeleportOffset(double offsetX, double offsetY, double offsetZ) {
+        entity.requestTeleportOffset(offsetX, offsetY, offsetZ);
+    }
+
     public boolean shouldRenderName() {
         return entity.shouldRenderName();
+    }
+
+    public void onDataTrackerUpdate(List<DataTracker.SerializedEntry<?>> entries) {
+        entity.onDataTrackerUpdate(entries);
     }
 
     public void onTrackedDataSet(TrackedData<?> data) {
@@ -895,6 +1025,10 @@ public class Entity {
 
     public void calculateDimensions() {
         entity.calculateDimensions();
+    }
+
+    public boolean recalculateDimensions(EntityDimensions previous) {
+        return entity.recalculateDimensions(previous);
     }
 
     public Direction getHorizontalFacing() {
@@ -913,12 +1047,12 @@ public class Entity {
         return entity.getBoundingBox();
     }
 
-    public void setBoundingBox(Box boundingBox) {
-        entity.setBoundingBox(boundingBox);
-    }
-
     public Box getVisibilityBoundingBox() {
         return entity.getVisibilityBoundingBox();
+    }
+
+    public void setBoundingBox(Box boundingBox) {
+        entity.setBoundingBox(boundingBox);
     }
 
     public float getEyeHeight(EntityPose pose) {
@@ -929,16 +1063,16 @@ public class Entity {
         return entity.getStandingEyeHeight();
     }
 
-    public Vec3d getLeashOffset() {
-        return entity.getLeashOffset();
+    public Vec3d getLeashOffset(float tickDelta) {
+        return entity.getLeashOffset(tickDelta);
     }
 
     public StackReference getStackReference(int mappedIndex) {
         return entity.getStackReference(mappedIndex);
     }
 
-    public void sendSystemMessage(Text message, UUID sender) {
-        entity.sendSystemMessage(message, sender);
+    public void sendMessage(Text message) {
+        entity.sendMessage(message);
     }
 
     public World getEntityWorld() {
@@ -954,12 +1088,8 @@ public class Entity {
         return entity.interactAt(player, hitPos, hand);
     }
 
-    public boolean isImmuneToExplosion() {
-        return entity.isImmuneToExplosion();
-    }
-
-    public void applyDamageEffects(LivingEntity attacker, net.minecraft.entity.Entity target) {
-        entity.applyDamageEffects(attacker, target);
+    public boolean isImmuneToExplosion(Explosion explosion) {
+        return entity.isImmuneToExplosion(explosion);
     }
 
     public void onStartedTrackingBy(ServerPlayerEntity player) {
@@ -982,9 +1112,17 @@ public class Entity {
         return entity.entityDataRequiresOperator();
     }
 
+    public ProjectileDeflection getProjectileDeflection(ProjectileEntity projectile) {
+        return entity.getProjectileDeflection(projectile);
+    }
+
     @Nullable
-    public net.minecraft.entity.Entity getPrimaryPassenger() {
-        return entity.getPrimaryPassenger();
+    public LivingEntity getControllingPassenger() {
+        return entity.getControllingPassenger();
+    }
+
+    public boolean hasControllingPassenger() {
+        return entity.hasControllingPassenger();
     }
 
     public List<net.minecraft.entity.Entity> getPassengerList() {
@@ -1000,8 +1138,8 @@ public class Entity {
         return entity.hasPassenger(passenger);
     }
 
-    public boolean hasPassengerType(Predicate<net.minecraft.entity.Entity> predicate) {
-        return entity.hasPassengerType(predicate);
+    public boolean hasPassenger(Predicate<net.minecraft.entity.Entity> predicate) {
+        return entity.hasPassenger(predicate);
     }
 
     public Stream<net.minecraft.entity.Entity> streamSelfAndPassengers() {
@@ -1014,6 +1152,10 @@ public class Entity {
 
     public Iterable<net.minecraft.entity.Entity> getPassengersDeep() {
         return entity.getPassengersDeep();
+    }
+
+    public int getPlayerPassengers() {
+        return entity.getPlayerPassengers();
     }
 
     public boolean hasPlayerRider() {
@@ -1036,6 +1178,10 @@ public class Entity {
         return entity.isLogicalSideForUpdatingMovement();
     }
 
+    public boolean canMoveVoluntarily() {
+        return entity.canMoveVoluntarily();
+    }
+
     public Vec3d updatePassengerForDismount(LivingEntity passenger) {
         return entity.updatePassengerForDismount(passenger);
     }
@@ -1043,6 +1189,11 @@ public class Entity {
     @Nullable
     public net.minecraft.entity.Entity getVehicle() {
         return entity.getVehicle();
+    }
+
+    @Nullable
+    public net.minecraft.entity.Entity getControllingVehicle() {
+        return entity.getControllingVehicle();
     }
 
     public PistonBehavior getPistonBehavior() {
@@ -1077,15 +1228,19 @@ public class Entity {
         entity.lookAt(anchorPoint, target);
     }
 
-    public boolean updateMovementInFluid(Tag<Fluid> tag, double d) {
-        return entity.updateMovementInFluid(tag, d);
+    public float lerpYaw(float delta) {
+        return entity.lerpYaw(delta);
+    }
+
+    public boolean updateMovementInFluid(TagKey<Fluid> tag, double speed) {
+        return entity.updateMovementInFluid(tag, speed);
     }
 
     public boolean isRegionUnloaded() {
         return entity.isRegionUnloaded();
     }
 
-    public double getFluidHeight(Tag<Fluid> fluid) {
+    public double getFluidHeight(TagKey<Fluid> fluid) {
         return entity.getFluidHeight(fluid);
     }
 
@@ -1101,16 +1256,24 @@ public class Entity {
         return entity.getHeight();
     }
 
-    public Packet<?> createSpawnPacket() {
-        return entity.createSpawnPacket();
+    public Packet<ClientPlayPacketListener> createSpawnPacket(EntityTrackerEntry entityTrackerEntry) {
+        return entity.createSpawnPacket(entityTrackerEntry);
     }
 
     public EntityDimensions getDimensions(EntityPose pose) {
         return entity.getDimensions(pose);
     }
 
+    public EntityAttachments getAttachments() {
+        return entity.getAttachments();
+    }
+
     public Vec3d getPos() {
         return entity.getPos();
+    }
+
+    public Vec3d getSyncedPos() {
+        return entity.getSyncedPos();
     }
 
     public BlockPos getBlockPos() {
@@ -1119,10 +1282,6 @@ public class Entity {
 
     public BlockState getBlockStateAtPos() {
         return entity.getBlockStateAtPos();
-    }
-
-    public BlockPos getCameraBlockPos() {
-        return entity.getCameraBlockPos();
     }
 
     public ChunkPos getChunkPos() {
@@ -1135,6 +1294,10 @@ public class Entity {
 
     public void setVelocity(Vec3d velocity) {
         entity.setVelocity(velocity);
+    }
+
+    public void addVelocityInternal(Vec3d velocity) {
+        entity.addVelocityInternal(velocity);
     }
 
     public void setVelocity(double x, double y, double z) {
@@ -1201,8 +1364,8 @@ public class Entity {
         entity.checkDespawn();
     }
 
-    public Vec3d method_30951(float f) {
-        return entity.method_30951(f);
+    public Vec3d getLeashPos(float delta) {
+        return entity.getLeashPos(delta);
     }
 
     public void onSpawnPacket(EntitySpawnS2CPacket packet) {
@@ -1222,8 +1385,16 @@ public class Entity {
         return entity.canFreeze();
     }
 
+    public boolean shouldEscapePowderSnow() {
+        return entity.shouldEscapePowderSnow();
+    }
+
     public float getYaw() {
         return entity.getYaw();
+    }
+
+    public float getBodyYaw() {
+        return entity.getBodyYaw();
     }
 
     public void setYaw(float yaw) {
@@ -1238,12 +1409,20 @@ public class Entity {
         entity.setPitch(pitch);
     }
 
-    public boolean isRemoved() {
-        return entity.isRemoved();
+    public boolean canSprintAsVehicle() {
+        return entity.canSprintAsVehicle();
     }
 
-    public void setRemoved(net.minecraft.entity.Entity.RemovalReason reason) {
-        entity.setRemoved(reason);
+    public float getStepHeight() {
+        return entity.getStepHeight();
+    }
+
+    public void onExplodedBy(@Nullable net.minecraft.entity.Entity entity) {
+        this.entity.onExplodedBy(entity);
+    }
+
+    public boolean isRemoved() {
+        return entity.isRemoved();
     }
 
     @Nullable
@@ -1251,8 +1430,12 @@ public class Entity {
         return entity.getRemovalReason();
     }
 
-    public void setListener(EntityChangeListener listener) {
-        entity.setListener(listener);
+    public void setRemoved(net.minecraft.entity.Entity.RemovalReason reason) {
+        entity.setRemoved(reason);
+    }
+
+    public void setChangeListener(EntityChangeListener changeListener) {
+        entity.setChangeListener(changeListener);
     }
 
     public boolean shouldSave() {
@@ -1267,8 +1450,87 @@ public class Entity {
         return entity.canModifyAt(world, pos);
     }
 
+    public World getWorld() {
+        return entity.getWorld();
+    }
+
+    public DamageSources getDamageSources() {
+        return entity.getDamageSources();
+    }
+
+    public DynamicRegistryManager getRegistryManager() {
+        return entity.getRegistryManager();
+    }
+
+    public Random getRandom() {
+        return entity.getRandom();
+    }
+
+    public Vec3d getMovement() {
+        return entity.getMovement();
+    }
+
+    @Nullable
+    public ItemStack getWeaponStack() {
+        return entity.getWeaponStack();
+    }
+
     public boolean cannotBeSilenced() {
         return entity.cannotBeSilenced();
+    }
+
+    public Text getStyledDisplayName() {
+        return entity.getStyledDisplayName();
+    }
+
+    public <A> @Nullable A getAttached(AttachmentType<A> type) {
+        return entity.getAttached(type);
+    }
+
+    public <A> A getAttachedOrThrow(AttachmentType<A> type) {
+        return entity.getAttachedOrThrow(type);
+    }
+
+    public <A> A getAttachedOrSet(AttachmentType<A> type, A defaultValue) {
+        return entity.getAttachedOrSet(type, defaultValue);
+    }
+
+    public <A> A getAttachedOrCreate(AttachmentType<A> type, Supplier<A> initializer) {
+        return entity.getAttachedOrCreate(type, initializer);
+    }
+
+    public <A> A getAttachedOrCreate(AttachmentType<A> type) {
+        return entity.getAttachedOrCreate(type);
+    }
+
+    @Contract("_, !null -> !null")
+    public <A> A getAttachedOrElse(AttachmentType<A> type, @Nullable A defaultValue) {
+        return entity.getAttachedOrElse(type, defaultValue);
+    }
+
+    public <A> A getAttachedOrGet(AttachmentType<A> type, Supplier<A> defaultValue) {
+        return entity.getAttachedOrGet(type, defaultValue);
+    }
+
+    public <A> @Nullable A setAttached(AttachmentType<A> type, @Nullable A value) {
+        return entity.setAttached(type, value);
+    }
+
+    public boolean hasAttached(AttachmentType<?> type) {
+        return entity.hasAttached(type);
+    }
+
+    public <A> @Nullable A removeAttached(AttachmentType<A> type) {
+        return entity.removeAttached(type);
+    }
+
+    public <A> @Nullable A modifyAttached(AttachmentType<A> type, UnaryOperator<A> modifier) {
+        return entity.modifyAttached(type, modifier);
+    }
+
+    private final net.minecraft.entity.Entity entity;
+    public Entity(net.minecraft.entity.Entity entity) {
+        this.entity = entity;
     }
 
     public String getNbt() {

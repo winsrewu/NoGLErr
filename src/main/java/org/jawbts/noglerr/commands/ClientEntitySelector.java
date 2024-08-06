@@ -27,8 +27,8 @@ public class ClientEntitySelector {
     private final int limit;
     private final boolean includesNonPlayers;
     private final boolean localWorldOnly;
-    private final Predicate<Entity> basePredicate;
-    private final NumberRange.FloatRange distance;
+    private final List<Predicate<Entity>> predicates;
+    private final NumberRange.DoubleRange distance;
     private final Function<Vec3d, Vec3d> positionOffset;
     @Nullable
     private final Box box;
@@ -45,7 +45,7 @@ public class ClientEntitySelector {
         limit = entitySelector.getLimit();
         includesNonPlayers = entitySelector.includesNonPlayers();
         localWorldOnly = entitySelector.isLocalWorldOnly();
-        basePredicate = ((EntitySelectorAccessor) entitySelector).getBasePredicate();
+        predicates = ((EntitySelectorAccessor) entitySelector).getPredicates();
         distance = ((EntitySelectorAccessor) entitySelector).getDistance();
         positionOffset = ((EntitySelectorAccessor) entitySelector).getPositionOffset();
         box = ((EntitySelectorAccessor) entitySelector).getBox();
@@ -66,7 +66,7 @@ public class ClientEntitySelector {
         }
         if (playerName != null) {
             for (AbstractClientPlayerEntity clientPlayer : mc.world.getPlayers()) {
-                if (clientPlayer.getName().asString().equalsIgnoreCase(playerName)) {
+                if (clientPlayer.getName().getLiteralString().equalsIgnoreCase(playerName)) {
                     return Lists.newArrayList(clientPlayer);
                 }
                 return Collections.emptyList();
@@ -104,7 +104,7 @@ public class ClientEntitySelector {
         List<AbstractClientPlayerEntity> list = mc.world.getPlayers();
         if (playerName != null) {
             for (AbstractClientPlayerEntity clientPlayer : list) {
-                if (clientPlayer.getName().asString().equalsIgnoreCase(playerName)) {
+                if (clientPlayer.getName().getLiteralString().equalsIgnoreCase(playerName)) {
                     return Lists.newArrayList(clientPlayer);
                 }
                 return Collections.emptyList();

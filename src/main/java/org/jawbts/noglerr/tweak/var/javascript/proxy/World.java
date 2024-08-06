@@ -1,38 +1,50 @@
 package org.jawbts.noglerr.tweak.var.javascript.proxy;
 
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.component.type.FireworkExplosionComponent;
+import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.map.MapState;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.recipe.BrewingRecipeRegistry;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.tag.TagManager;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.ColorResolver;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.*;
@@ -41,27 +53,22 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
-import net.minecraft.world.level.ColorResolver;
+import net.minecraft.world.tick.QueryableTickScheduler;
+import net.minecraft.world.tick.TickManager;
+import net.minecraft.world.tick.TickPriority;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
-import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class World {
-    private final net.minecraft.world.World world;
-
-    public World(net.minecraft.world.World world) {
-        this.world = world;
-    }
-
     public boolean isClient() {
         return world.isClient();
     }
@@ -124,16 +131,24 @@ public class World {
         world.scheduleBlockRerenderIfNeeded(pos, old, updated);
     }
 
-    public void updateNeighborsAlways(BlockPos pos, Block block) {
-        world.updateNeighborsAlways(pos, block);
+    public void updateNeighborsAlways(BlockPos pos, Block sourceBlock) {
+        world.updateNeighborsAlways(pos, sourceBlock);
     }
 
     public void updateNeighborsExcept(BlockPos pos, Block sourceBlock, Direction direction) {
         world.updateNeighborsExcept(pos, sourceBlock, direction);
     }
 
-    public void updateNeighbor(BlockPos pos, Block sourceBlock, BlockPos neighborPos) {
-        world.updateNeighbor(pos, sourceBlock, neighborPos);
+    public void updateNeighbor(BlockPos pos, Block sourceBlock, BlockPos sourcePos) {
+        world.updateNeighbor(pos, sourceBlock, sourcePos);
+    }
+
+    public void updateNeighbor(BlockState state, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        world.updateNeighbor(state, pos, sourceBlock, sourcePos, notify);
+    }
+
+    public void replaceWithStateForNeighborUpdate(Direction direction, BlockState neighborState, BlockPos pos, BlockPos neighborPos, int flags, int maxUpdateDepth) {
+        world.replaceWithStateForNeighborUpdate(direction, neighborState, pos, neighborPos, flags, maxUpdateDepth);
     }
 
     public int getTopY(Heightmap.Type heightmap, int x, int z) {
@@ -160,16 +175,48 @@ public class World {
         return world.isNight();
     }
 
-    public void playSound(@Nullable PlayerEntity player, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        world.playSound(player, pos, sound, category, volume, pitch);
+    public void playSound(@Nullable Entity source, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        world.playSound(source, pos, sound, category, volume, pitch);
     }
 
-    public void playSound(@Nullable PlayerEntity except, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        world.playSound(except, x, y, z, sound, category, volume, pitch);
+    public void playSound(@Nullable PlayerEntity source, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        world.playSound(source, pos, sound, category, volume, pitch);
     }
 
-    public void playSoundFromEntity(@Nullable PlayerEntity except, Entity entity, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        world.playSoundFromEntity(except, entity, sound, category, volume, pitch);
+    public void playSound(@Nullable PlayerEntity source, double x, double y, double z, RegistryEntry<SoundEvent> sound, SoundCategory category, float volume, float pitch, long seed) {
+        world.playSound(source, x, y, z, sound, category, volume, pitch, seed);
+    }
+
+    public void playSound(@Nullable PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch, long seed) {
+        world.playSound(source, x, y, z, sound, category, volume, pitch, seed);
+    }
+
+    public void playSoundFromEntity(@Nullable PlayerEntity source, Entity entity, RegistryEntry<SoundEvent> sound, SoundCategory category, float volume, float pitch, long seed) {
+        world.playSoundFromEntity(source, entity, sound, category, volume, pitch, seed);
+    }
+
+    public void playSound(@Nullable PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category) {
+        world.playSound(source, x, y, z, sound, category);
+    }
+
+    public void playSound(@Nullable PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        world.playSound(source, x, y, z, sound, category, volume, pitch);
+    }
+
+    public void playSound(@Nullable PlayerEntity source, double x, double y, double z, RegistryEntry<SoundEvent> sound, SoundCategory category, float volume, float pitch) {
+        world.playSound(source, x, y, z, sound, category, volume, pitch);
+    }
+
+    public void playSoundFromEntity(@Nullable PlayerEntity source, Entity entity, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        world.playSoundFromEntity(source, entity, sound, category, volume, pitch);
+    }
+
+    public void playSoundAtBlockCenter(BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch, boolean useDistance) {
+        world.playSoundAtBlockCenter(pos, sound, category, volume, pitch, useDistance);
+    }
+
+    public void playSoundFromEntity(Entity entity, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+        world.playSoundFromEntity(entity, sound, category, volume, pitch);
     }
 
     public void playSound(double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch, boolean useDistance) {
@@ -204,16 +251,40 @@ public class World {
         world.tickEntity(tickConsumer, entity);
     }
 
-    public Explosion createExplosion(@Nullable Entity entity, double x, double y, double z, float power, Explosion.DestructionType destructionType) {
-        return world.createExplosion(entity, x, y, z, power, destructionType);
+    public boolean shouldUpdatePostDeath(Entity entity) {
+        return world.shouldUpdatePostDeath(entity);
     }
 
-    public Explosion createExplosion(@Nullable Entity entity, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType) {
-        return world.createExplosion(entity, x, y, z, power, createFire, destructionType);
+    public boolean shouldTickBlocksInChunk(long chunkPos) {
+        return world.shouldTickBlocksInChunk(chunkPos);
     }
 
-    public Explosion createExplosion(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, Explosion.DestructionType destructionType) {
-        return world.createExplosion(entity, damageSource, behavior, x, y, z, power, createFire, destructionType);
+    public boolean shouldTickBlockPos(BlockPos pos) {
+        return world.shouldTickBlockPos(pos);
+    }
+
+    public Explosion createExplosion(@Nullable Entity entity, double x, double y, double z, float power, net.minecraft.world.World.ExplosionSourceType explosionSourceType) {
+        return world.createExplosion(entity, x, y, z, power, explosionSourceType);
+    }
+
+    public Explosion createExplosion(@Nullable Entity entity, double x, double y, double z, float power, boolean createFire, net.minecraft.world.World.ExplosionSourceType explosionSourceType) {
+        return world.createExplosion(entity, x, y, z, power, createFire, explosionSourceType);
+    }
+
+    public Explosion createExplosion(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, Vec3d pos, float power, boolean createFire, net.minecraft.world.World.ExplosionSourceType explosionSourceType) {
+        return world.createExplosion(entity, damageSource, behavior, pos, power, createFire, explosionSourceType);
+    }
+
+    public Explosion createExplosion(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, net.minecraft.world.World.ExplosionSourceType explosionSourceType) {
+        return world.createExplosion(entity, damageSource, behavior, x, y, z, power, createFire, explosionSourceType);
+    }
+
+    public Explosion createExplosion(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, net.minecraft.world.World.ExplosionSourceType explosionSourceType, ParticleEffect particle, ParticleEffect emitterParticle, RegistryEntry<SoundEvent> soundEvent) {
+        return world.createExplosion(entity, damageSource, behavior, x, y, z, power, createFire, explosionSourceType, particle, emitterParticle, soundEvent);
+    }
+
+    public Explosion createExplosion(@Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionBehavior behavior, double x, double y, double z, float power, boolean createFire, net.minecraft.world.World.ExplosionSourceType explosionSourceType, boolean particles, ParticleEffect particle, ParticleEffect emitterParticle, RegistryEntry<SoundEvent> soundEvent) {
+        return world.createExplosion(entity, damageSource, behavior, x, y, z, power, createFire, explosionSourceType, particles, particle, emitterParticle, soundEvent);
     }
 
     public String asString() {
@@ -253,6 +324,14 @@ public class World {
         world.setMobSpawnOptions(spawnMonsters, spawnAnimals);
     }
 
+    public BlockPos getSpawnPos() {
+        return world.getSpawnPos();
+    }
+
+    public float getSpawnAngle() {
+        return world.getSpawnAngle();
+    }
+
     public void close() throws IOException {
         world.close();
     }
@@ -270,6 +349,14 @@ public class World {
         return world.getEntitiesByType(filter, box, predicate);
     }
 
+    public <T extends Entity> void collectEntitiesByType(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate, List<? super T> result) {
+        world.collectEntitiesByType(filter, box, predicate, result);
+    }
+
+    public <T extends Entity> void collectEntitiesByType(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate, List<? super T> result, int limit) {
+        world.collectEntitiesByType(filter, box, predicate, result, limit);
+    }
+
     @Nullable
     public Entity getEntityById(int id) {
         return world.getEntityById(id);
@@ -281,26 +368,6 @@ public class World {
 
     public int getSeaLevel() {
         return world.getSeaLevel();
-    }
-
-    public int getReceivedStrongRedstonePower(BlockPos pos) {
-        return world.getReceivedStrongRedstonePower(pos);
-    }
-
-    public boolean isEmittingRedstonePower(BlockPos pos, Direction direction) {
-        return world.isEmittingRedstonePower(pos, direction);
-    }
-
-    public int getEmittedRedstonePower(BlockPos pos, Direction direction) {
-        return world.getEmittedRedstonePower(pos, direction);
-    }
-
-    public boolean isReceivingRedstonePower(BlockPos pos) {
-        return world.isReceivingRedstonePower(pos);
-    }
-
-    public int getReceivedRedstonePower(BlockPos pos) {
-        return world.getReceivedRedstonePower(pos);
     }
 
     public void disconnect() {
@@ -323,6 +390,10 @@ public class World {
         world.sendEntityStatus(entity, status);
     }
 
+    public void sendEntityDamage(Entity entity, DamageSource damageSource) {
+        world.sendEntityDamage(entity, damageSource);
+    }
+
     public void addSyncedBlockEvent(BlockPos pos, Block block, int type, int data) {
         world.addSyncedBlockEvent(pos, block, type, data);
     }
@@ -333,6 +404,10 @@ public class World {
 
     public GameRules getGameRules() {
         return world.getGameRules();
+    }
+
+    public TickManager getTickManager() {
+        return world.getTickManager();
     }
 
     public float getThunderGradient(float delta) {
@@ -363,21 +438,17 @@ public class World {
         return world.hasRain(pos);
     }
 
-    public boolean hasHighHumidity(BlockPos pos) {
-        return world.hasHighHumidity(pos);
-    }
-
     @Nullable
-    public MapState getMapState(String id) {
+    public MapState getMapState(MapIdComponent id) {
         return world.getMapState(id);
     }
 
-    public void putMapState(String id, MapState state) {
+    public void putMapState(MapIdComponent id, MapState state) {
         world.putMapState(id, state);
     }
 
-    public int getNextMapId() {
-        return world.getNextMapId();
+    public MapIdComponent increaseAndGetMapId() {
+        return world.increaseAndGetMapId();
     }
 
     public void syncGlobalEvent(int eventId, BlockPos pos, int data) {
@@ -392,8 +463,8 @@ public class World {
         world.setBlockBreakingInfo(entityId, pos, progress);
     }
 
-    public void addFireworkParticle(double x, double y, double z, double velocityX, double velocityY, double velocityZ, @Nullable NbtCompound nbt) {
-        world.addFireworkParticle(x, y, z, velocityX, velocityY, velocityZ, nbt);
+    public void addFireworkParticle(double x, double y, double z, double velocityX, double velocityY, double velocityZ, List<FireworkExplosionComponent> explosions) {
+        world.addFireworkParticle(x, y, z, velocityX, velocityY, velocityZ, explosions);
     }
 
     public Scoreboard getScoreboard() {
@@ -428,6 +499,10 @@ public class World {
         return world.getDimension();
     }
 
+    public RegistryEntry<DimensionType> getDimensionEntry() {
+        return world.getDimensionEntry();
+    }
+
     public RegistryKey<net.minecraft.world.World> getRegistryKey() {
         return world.getRegistryKey();
     }
@@ -446,10 +521,6 @@ public class World {
 
     public RecipeManager getRecipeManager() {
         return world.getRecipeManager();
-    }
-
-    public TagManager getTagManager() {
-        return world.getTagManager();
     }
 
     public BlockPos getRandomPosInChunk(int x, int y, int z, int i) {
@@ -476,16 +547,48 @@ public class World {
         return world.isDebugWorld();
     }
 
+    public long getTickOrder() {
+        return world.getTickOrder();
+    }
+
+    public DynamicRegistryManager getRegistryManager() {
+        return world.getRegistryManager();
+    }
+
+    public DamageSources getDamageSources() {
+        return world.getDamageSources();
+    }
+
+    public BrewingRecipeRegistry getBrewingRecipeRegistry() {
+        return world.getBrewingRecipeRegistry();
+    }
+
     public long getLunarTime() {
         return world.getLunarTime();
     }
 
-    public TickScheduler<Block> getBlockTickScheduler() {
+    public QueryableTickScheduler<Block> getBlockTickScheduler() {
         return world.getBlockTickScheduler();
     }
 
-    public TickScheduler<Fluid> getFluidTickScheduler() {
+    public void scheduleBlockTick(BlockPos pos, Block block, int delay, TickPriority priority) {
+        world.scheduleBlockTick(pos, block, delay, priority);
+    }
+
+    public void scheduleBlockTick(BlockPos pos, Block block, int delay) {
+        world.scheduleBlockTick(pos, block, delay);
+    }
+
+    public QueryableTickScheduler<Fluid> getFluidTickScheduler() {
         return world.getFluidTickScheduler();
+    }
+
+    public void scheduleFluidTick(BlockPos pos, Fluid fluid, int delay, TickPriority priority) {
+        world.scheduleFluidTick(pos, fluid, delay, priority);
+    }
+
+    public void scheduleFluidTick(BlockPos pos, Fluid fluid, int delay) {
+        world.scheduleFluidTick(pos, fluid, delay);
     }
 
     public Difficulty getDifficulty() {
@@ -504,56 +607,52 @@ public class World {
         world.updateNeighbors(pos, block);
     }
 
-    public void syncWorldEvent(@Nullable PlayerEntity player, int eventId, BlockPos pos, int data) {
-        world.syncWorldEvent(player, eventId, pos, data);
+    public void playSound(@Nullable PlayerEntity except, BlockPos pos, SoundEvent sound, SoundCategory category) {
+        world.playSound(except, pos, sound, category);
     }
 
-    public int getLogicalHeight() {
-        return world.getLogicalHeight();
+    public void syncWorldEvent(@Nullable PlayerEntity player, int eventId, BlockPos pos, int data) {
+        world.syncWorldEvent(player, eventId, pos, data);
     }
 
     public void syncWorldEvent(int eventId, BlockPos pos, int data) {
         world.syncWorldEvent(eventId, pos, data);
     }
 
-    public void emitGameEvent(@Nullable Entity entity, GameEvent event, BlockPos pos) {
+    public void emitGameEvent(RegistryEntry<GameEvent> event, Vec3d emitterPos, GameEvent.Emitter emitter) {
+        world.emitGameEvent(event, emitterPos, emitter);
+    }
+
+    public void emitGameEvent(@Nullable Entity entity, RegistryEntry<GameEvent> event, Vec3d pos) {
         world.emitGameEvent(entity, event, pos);
     }
 
-    public void emitGameEvent(GameEvent event, BlockPos pos) {
-        world.emitGameEvent(event, pos);
+    public void emitGameEvent(@Nullable Entity entity, RegistryEntry<GameEvent> event, BlockPos pos) {
+        world.emitGameEvent(entity, event, pos);
     }
 
-    public void emitGameEvent(GameEvent event, Entity emitter) {
-        world.emitGameEvent(event, emitter);
+    public void emitGameEvent(RegistryEntry<GameEvent> event, BlockPos pos, GameEvent.Emitter emitter) {
+        world.emitGameEvent(event, pos, emitter);
     }
 
-    public void emitGameEvent(@Nullable Entity entity, GameEvent event, Entity emitter) {
-        world.emitGameEvent(entity, event, emitter);
+    public void emitGameEvent(RegistryKey<GameEvent> event, BlockPos pos, GameEvent.Emitter emitter) {
+        world.emitGameEvent(event, pos, emitter);
     }
 
     public <T extends BlockEntity> Optional<T> getBlockEntity(BlockPos pos, BlockEntityType<T> type) {
         return world.getBlockEntity(pos, type);
     }
 
-    public Stream<VoxelShape> getEntityCollisions(@Nullable Entity entity, Box box, Predicate<Entity> predicate) {
-        return world.getEntityCollisions(entity, box, predicate);
+    public List<VoxelShape> getEntityCollisions(@Nullable Entity entity, Box box) {
+        return world.getEntityCollisions(entity, box);
     }
 
-    public boolean intersectsEntities(@Nullable Entity entity, VoxelShape shape) {
-        return world.intersectsEntities(entity, shape);
+    public boolean doesNotIntersectEntities(@Nullable Entity except, VoxelShape shape) {
+        return world.doesNotIntersectEntities(except, shape);
     }
 
     public BlockPos getTopPosition(Heightmap.Type heightmap, BlockPos pos) {
         return world.getTopPosition(heightmap, pos);
-    }
-
-    public DynamicRegistryManager getRegistryManager() {
-        return world.getRegistryManager();
-    }
-
-    public Optional<RegistryKey<Biome>> getBiomeKey(BlockPos pos) {
-        return world.getBiomeKey(pos);
     }
 
     public <T extends Entity> List<T> getEntitiesByClass(Class<T> entityClass, Box box, Predicate<? super T> predicate) {
@@ -629,7 +728,7 @@ public class World {
         return world.getPlayerByUuid(uuid);
     }
 
-    public Biome getBiome(BlockPos pos) {
+    public RegistryEntry<Biome> getBiome(BlockPos pos) {
         return world.getBiome(pos);
     }
 
@@ -641,11 +740,11 @@ public class World {
         return world.getColor(pos, colorResolver);
     }
 
-    public Biome getBiomeForNoiseGen(int biomeX, int biomeY, int biomeZ) {
+    public RegistryEntry<Biome> getBiomeForNoiseGen(int biomeX, int biomeY, int biomeZ) {
         return world.getBiomeForNoiseGen(biomeX, biomeY, biomeZ);
     }
 
-    public Biome getGeneratorStoredBiome(int biomeX, int biomeY, int biomeZ) {
+    public RegistryEntry<Biome> getGeneratorStoredBiome(int biomeX, int biomeY, int biomeZ) {
         return world.getGeneratorStoredBiome(biomeX, biomeY, biomeZ);
     }
 
@@ -665,13 +764,13 @@ public class World {
         return world.isSkyVisibleAllowingSea(pos);
     }
 
+    public float getPhototaxisFavor(BlockPos pos) {
+        return world.getPhototaxisFavor(pos);
+    }
+
     @Deprecated
     public float getBrightness(BlockPos pos) {
         return world.getBrightness(pos);
-    }
-
-    public int getStrongRedstonePower(BlockPos pos, Direction direction) {
-        return world.getStrongRedstonePower(pos, direction);
     }
 
     public Chunk getChunk(BlockPos pos) {
@@ -721,6 +820,14 @@ public class World {
     @Deprecated
     public boolean isRegionLoaded(int minX, int minZ, int maxX, int maxZ) {
         return world.isRegionLoaded(minX, minZ, maxX, maxZ);
+    }
+
+    public FeatureSet getEnabledFeatures() {
+        return world.getEnabledFeatures();
+    }
+
+    public <T> RegistryWrapper<T> createCommandRegistryWrapper(RegistryKey<? extends Registry<? extends T>> registryRef) {
+        return world.createCommandRegistryWrapper(registryRef);
     }
 
     public float getBrightness(Direction direction, boolean shaded) {
@@ -808,12 +915,25 @@ public class World {
         return world.sectionIndexToCoord(index);
     }
 
+    @Nullable
+    public Object getBlockEntityRenderData(BlockPos pos) {
+        return world.getBlockEntityRenderData(pos);
+    }
+
+    public boolean hasBiomes() {
+        return world.hasBiomes();
+    }
+
+    public @UnknownNullability RegistryEntry<Biome> getBiomeFabric(BlockPos pos) {
+        return world.getBiomeFabric(pos);
+    }
+
     public boolean canPlace(BlockState state, BlockPos pos, ShapeContext context) {
         return world.canPlace(state, pos, context);
     }
 
-    public boolean intersectsEntities(Entity entity) {
-        return world.intersectsEntities(entity);
+    public boolean doesNotIntersectEntities(Entity entity) {
+        return world.doesNotIntersectEntities(entity);
     }
 
     public boolean isSpaceEmpty(Box box) {
@@ -824,36 +944,60 @@ public class World {
         return world.isSpaceEmpty(entity);
     }
 
-    public boolean isSpaceEmpty(Entity entity, Box box) {
+    public boolean isSpaceEmpty(@Nullable Entity entity, Box box) {
         return world.isSpaceEmpty(entity, box);
     }
 
-    public boolean isSpaceEmpty(@Nullable Entity entity, Box box, Predicate<Entity> filter) {
-        return world.isSpaceEmpty(entity, box, filter);
+    public boolean isBlockSpaceEmpty(@Nullable Entity entity, Box box) {
+        return world.isBlockSpaceEmpty(entity, box);
     }
 
-    public Stream<VoxelShape> getCollisions(@Nullable Entity entity, Box box, Predicate<Entity> predicate) {
-        return world.getCollisions(entity, box, predicate);
+    public Iterable<VoxelShape> getCollisions(@Nullable Entity entity, Box box) {
+        return world.getCollisions(entity, box);
     }
 
-    public Stream<VoxelShape> getBlockCollisions(@Nullable Entity entity, Box box) {
+    public Iterable<VoxelShape> getBlockCollisions(@Nullable Entity entity, Box box) {
         return world.getBlockCollisions(entity, box);
     }
 
-    public boolean hasBlockCollision(@Nullable Entity entity, Box box, BiPredicate<BlockState, BlockPos> predicate) {
-        return world.hasBlockCollision(entity, box, predicate);
+    public boolean canCollide(@Nullable Entity entity, Box box) {
+        return world.canCollide(entity, box);
     }
 
-    public Stream<VoxelShape> getBlockCollisions(@Nullable Entity entity, Box box, BiPredicate<BlockState, BlockPos> predicate) {
-        return world.getBlockCollisions(entity, box, predicate);
+    public Optional<BlockPos> findSupportingBlockPos(Entity entity, Box box) {
+        return world.findSupportingBlockPos(entity, box);
     }
 
     public Optional<Vec3d> findClosestCollision(@Nullable Entity entity, VoxelShape shape, Vec3d target, double x, double y, double z) {
         return world.findClosestCollision(entity, shape, target, x, y, z);
     }
 
-    public Biome getBiomeForNoiseGen(ChunkPos chunkPos) {
-        return world.getBiomeForNoiseGen(chunkPos);
+    public int getStrongRedstonePower(BlockPos pos, Direction direction) {
+        return world.getStrongRedstonePower(pos, direction);
+    }
+
+    public int getReceivedStrongRedstonePower(BlockPos pos) {
+        return world.getReceivedStrongRedstonePower(pos);
+    }
+
+    public int getEmittedRedstonePower(BlockPos pos, Direction direction, boolean onlyFromGate) {
+        return world.getEmittedRedstonePower(pos, direction, onlyFromGate);
+    }
+
+    public boolean isEmittingRedstonePower(BlockPos pos, Direction direction) {
+        return world.isEmittingRedstonePower(pos, direction);
+    }
+
+    public int getEmittedRedstonePower(BlockPos pos, Direction direction) {
+        return world.getEmittedRedstonePower(pos, direction);
+    }
+
+    public boolean isReceivingRedstonePower(BlockPos pos) {
+        return world.isReceivingRedstonePower(pos);
+    }
+
+    public int getReceivedRedstonePower(BlockPos pos) {
+        return world.getReceivedRedstonePower(pos);
     }
 
     public boolean breakBlock(BlockPos pos, boolean drop) {
@@ -880,5 +1024,9 @@ public class World {
         return world.getMoonPhase();
     }
 
+    private final net.minecraft.world.World world;
 
+    public World(net.minecraft.world.World world) {
+        this.world = world;
+    }
 }

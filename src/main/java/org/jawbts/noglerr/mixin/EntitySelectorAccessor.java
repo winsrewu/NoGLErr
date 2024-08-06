@@ -17,11 +17,11 @@ import java.util.function.Predicate;
 
 @Mixin(EntitySelector.class)
 public interface EntitySelectorAccessor {
-    @Accessor
-    Predicate<Entity> getBasePredicate();
+    @Accessor()
+    List<Predicate<Entity>> getPredicates();
 
     @Accessor
-    NumberRange.FloatRange getDistance();
+    NumberRange.DoubleRange getDistance();
 
     @Accessor
     Function<Vec3d, Vec3d> getPositionOffset();

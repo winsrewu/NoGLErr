@@ -1,6 +1,7 @@
 package org.jawbts.noglerr.tweak.voice;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.event.ClientTickHandler;
 import org.jawbts.noglerr.tweak.Utils;
@@ -87,6 +88,11 @@ public class Vosk {
         if (!Configs.Toggles.VOICE_TO_TEXT_NO_HISTORY.getBooleanValue()) {
             mc.inGameHud.getChatHud().addToMessageHistory(s);
         }
-        mc.player.sendChatMessage(s);
+        if (ClientTickHandler.mc.player == null) return;
+        if (s.startsWith("/")) {
+            ClientTickHandler.player.networkHandler.sendChatCommand(s.substring(1));
+        } else {
+            ClientTickHandler.player.networkHandler.sendChatMessage(s);
+        }
     }
 }

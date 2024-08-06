@@ -23,7 +23,8 @@ public class Utils {
 
     public static Text createTextFromJsonOrString(String s) {
         try {
-            return Text.Serializer.fromJson(s);
+            // TODO return Text.Serializer.fromJson(s);
+            return Text.of("");
         } catch (JsonSyntaxException e) {
             return Text.of(s);
         }

@@ -2,9 +2,8 @@ package org.jawbts.noglerr.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import org.jawbts.noglerr.tweak.Utils;
 import org.jawbts.noglerr.tweak.var.ScriptVarManager;
 import org.jawbts.noglerr.tweak.var.TargetManager;
@@ -13,127 +12,129 @@ import org.jawbts.noglerr.tweak.var.VarManager;
 import org.jawbts.noglerr.util.PlayerMessageSender;
 import org.jawbts.noglerr.util.ScriptVarUtils;
 
-import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class ShowVarCommand {
     static PlayerMessageSender pms = PlayerMessageSender.getInstance();
 
     public static void init() {
-        ClientCommandManager.DISPATCHER.register(
-                literal("showvar")
-                        //show help
-                        .executes(context -> {
-                            context.getSource().getPlayer().sendMessage(
-                                    new TranslatableText("noglerr.command.help"), false);
-                            return 1;
-                        })
-                        .then(literal("var")
-                                .then(literal("list")
-                                        .executes(context -> getVarList(1))
-                                        .then(argument("Page", IntegerArgumentType.integer(1))
-                                                .executes(context -> getVarList(IntegerArgumentType.getInteger(context, "Page")))
-                                        ))
-                                .then(literal("add")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .then(argument("Value", StringArgumentType.greedyString())
-                                                        .executes(context -> setVar(StringArgumentType.getString(context, "Name"),
-                                                                StringArgumentType.getString(context, "Value"), false))
-                                                )))
-                                .then(literal("modify")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .then(argument("Value", StringArgumentType.greedyString())
-                                                        .executes(context -> setVar(StringArgumentType.getString(context, "Name"),
-                                                                StringArgumentType.getString(context, "Value"), true))
-                                                )))
-                                .then(literal("del")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .executes(context -> delVar(StringArgumentType.getString(context, "Name")))
-                                        ))
-                        )
-                        .then(literal("text")
-                                .then(literal("list")
-                                        .executes(context -> getTextList(1))
-                                        .then(argument("Page", IntegerArgumentType.integer(1))
-                                                .executes(context -> getTextList(IntegerArgumentType.getInteger(context, "Page")))
-                                        ))
-                                .then(literal("add")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .then(argument("Context", ClientTextArgumentType.text())
-                                                        .executes(context -> setText(StringArgumentType.getString(context, "Name"),
-                                                                ClientTextArgumentType.getTextArgument(context, "Context"), false))
-                                                )))
-                                .then(literal("modify")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .then(argument("Context", ClientTextArgumentType.text())
-                                                        .executes(context -> setText(StringArgumentType.getString(context, "Name"),
-                                                                ClientTextArgumentType.getTextArgument(context, "Context"), true))
-                                                )))
-                                .then(literal("del")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .executes(context -> delText(StringArgumentType.getString(context, "Name")))
-                                        ))
-                        )
-                        .then(literal("target")
-                                .then(literal("list")
-                                        .executes(context -> getTargetList(1))
-                                        .then(argument("Page", IntegerArgumentType.integer(1))
-                                                .executes(context -> getTargetList(IntegerArgumentType.getInteger(context, "Page")))
-                                        ))
-                                .then(literal("add")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .then(argument("Context", StringArgumentType.greedyString())
-                                                        .executes(context -> setTarget(StringArgumentType.getString(context, "Name"),
-                                                                StringArgumentType.getString(context, "Context"), false))
-                                                )))
-                                .then(literal("modify")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .then(argument("Context", StringArgumentType.greedyString())
-                                                        .executes(context -> setTarget(StringArgumentType.getString(context, "Name"),
-                                                                StringArgumentType.getString(context, "Context"), true))
-                                                )))
-                                .then(literal("del")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .executes(context -> delTarget(StringArgumentType.getString(context, "Name")))
-                                        ))
-                        )
-                        .then(literal("script")
-                                .then(literal("folder")
-                                        .executes(context -> {
-                                            if (!ScriptVarUtils.openFolder()) {
-                                                pms.add("red", "noglerr.command.cannotOpenFolder");
-                                            }
-                                            return 1;
-                                        })
-                                )
-                                .then(literal("reload")
-                                        .executes(context -> {
-                                            ScriptVarManager.getInstance().reload();
-                                            pms.add("noglerr.command.succeed");
-                                            return 0;
-                                        })
-                                )
-                                .then(literal("call")
-                                        .then(argument("Name", StringArgumentType.string())
-                                                .executes(context -> {
-                                                    pms.add(ScriptVarManager.getInstance().callFunction(
-                                                            StringArgumentType.getString(context, "Name")
-                                                    ));
-                                                    return 1;
-                                                })
-                                                .then(argument("Args", StringArgumentType.greedyString())
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+            dispatcher.register(
+                    literal("showvar")
+                            //show help
+                            .executes(context -> {
+                                context.getSource().getPlayer().sendMessage(
+                                        Text.stringifiedTranslatable("noglerr.command.help"), false);
+                                return 1;
+                            })
+                            .then(literal("var")
+                                    .then(literal("list")
+                                            .executes(context -> getVarList(1))
+                                            .then(argument("Page", IntegerArgumentType.integer(1))
+                                                    .executes(context -> getVarList(IntegerArgumentType.getInteger(context, "Page")))
+                                            ))
+                                    .then(literal("add")
+                                            .then(argument("Name", StringArgumentType.string())
+                                                    .then(argument("Value", StringArgumentType.greedyString())
+                                                            .executes(context -> setVar(StringArgumentType.getString(context, "Name"),
+                                                                    StringArgumentType.getString(context, "Value"), false))
+                                                    )))
+                                    .then(literal("modify")
+                                            .then(argument("Name", StringArgumentType.string())
+                                                    .then(argument("Value", StringArgumentType.greedyString())
+                                                            .executes(context -> setVar(StringArgumentType.getString(context, "Name"),
+                                                                    StringArgumentType.getString(context, "Value"), true))
+                                                    )))
+                                    .then(literal("del")
+                                            .then(argument("Name", StringArgumentType.string())
+                                                    .executes(context -> delVar(StringArgumentType.getString(context, "Name")))
+                                            ))
+                            )
+                            .then(literal("text")
+                                    .then(literal("list")
+                                            .executes(context -> getTextList(1))
+                                            .then(argument("Page", IntegerArgumentType.integer(1))
+                                                    .executes(context -> getTextList(IntegerArgumentType.getInteger(context, "Page")))
+                                            ))
+                                    .then(literal("add")
+                                            .then(argument("Name", StringArgumentType.string())
+                                                    .then(argument("Context", ClientTextArgumentType.text())
+                                                            .executes(context -> setText(StringArgumentType.getString(context, "Name"),
+                                                                    ClientTextArgumentType.getTextArgument(context, "Context"), false))
+                                                    )))
+                                    .then(literal("modify")
+                                            .then(argument("Name", StringArgumentType.string())
+                                                    .then(argument("Context", ClientTextArgumentType.text())
+                                                            .executes(context -> setText(StringArgumentType.getString(context, "Name"),
+                                                                    ClientTextArgumentType.getTextArgument(context, "Context"), true))
+                                                    )))
+                                    .then(literal("del")
+                                            .then(argument("Name", StringArgumentType.string())
+                                                    .executes(context -> delText(StringArgumentType.getString(context, "Name")))
+                                            ))
+                            )
+                            .then(literal("target")
+                                    .then(literal("list")
+                                            .executes(context -> getTargetList(1))
+                                            .then(argument("Page", IntegerArgumentType.integer(1))
+                                                    .executes(context -> getTargetList(IntegerArgumentType.getInteger(context, "Page")))
+                                            ))
+                                    .then(literal("add")
+                                            .then(argument("Name", StringArgumentType.string())
+                                                    .then(argument("Context", StringArgumentType.greedyString())
+                                                            .executes(context -> setTarget(StringArgumentType.getString(context, "Name"),
+                                                                    StringArgumentType.getString(context, "Context"), false))
+                                                    )))
+                                    .then(literal("modify")
+                                            .then(argument("Name", StringArgumentType.string())
+                                                    .then(argument("Context", StringArgumentType.greedyString())
+                                                            .executes(context -> setTarget(StringArgumentType.getString(context, "Name"),
+                                                                    StringArgumentType.getString(context, "Context"), true))
+                                                    )))
+                                    .then(literal("del")
+                                            .then(argument("Name", StringArgumentType.string())
+                                                    .executes(context -> delTarget(StringArgumentType.getString(context, "Name")))
+                                            ))
+                            )
+                            .then(literal("script")
+                                    .then(literal("folder")
+                                            .executes(context -> {
+                                                if (!ScriptVarUtils.openFolder()) {
+                                                    pms.add("red", "noglerr.command.cannotOpenFolder");
+                                                }
+                                                return 1;
+                                            })
+                                    )
+                                    .then(literal("reload")
+                                            .executes(context -> {
+                                                ScriptVarManager.getInstance().reload();
+                                                pms.add("noglerr.command.succeed");
+                                                return 0;
+                                            })
+                                    )
+                                    .then(literal("call")
+                                            .then(argument("Name", StringArgumentType.string())
                                                     .executes(context -> {
                                                         pms.add(ScriptVarManager.getInstance().callFunction(
-                                                            StringArgumentType.getString(context, "Name"),
-                                                            (Object[]) StringArgumentType.getString(context, "Args").split(" ")
+                                                                StringArgumentType.getString(context, "Name")
                                                         ));
                                                         return 1;
                                                     })
-                                                )
-                                        )
-                                )
-                        )
-        );
+                                                    .then(argument("Args", StringArgumentType.greedyString())
+                                                            .executes(context -> {
+                                                                pms.add(ScriptVarManager.getInstance().callFunction(
+                                                                        StringArgumentType.getString(context, "Name"),
+                                                                        (Object[]) StringArgumentType.getString(context, "Args").split(" ")
+                                                                ));
+                                                                return 1;
+                                                            })
+                                                    )
+                                            )
+                                    )
+                            )
+            );
+        });
     }
 
     private static int getVarList(int page) {
@@ -161,7 +162,8 @@ public class ShowVarCommand {
     }
 
     private static int setText(String name, Text text, boolean hard) {
-        if (TextManager.getInstance().addData(Utils.escapeString(name), Text.Serializer.toJson(text), hard)) {
+        // TODO Text.Serialization.toJsonString(text)
+        if (TextManager.getInstance().addData(Utils.escapeString(name), "", hard)) {
             pms.add("noglerr.command.succeed");
         } else {
             pms.add("red", "noglerr.command.nameAlreadyExists");

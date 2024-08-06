@@ -60,11 +60,11 @@ public class VarEntityHandler {
                             entityCounter++;
                         }
 
-                        ArmorStandEntity armorStand = new ArmorStandEntity(entity.world, entity.getX(), entity.getY() - 1.5, entity.getZ());
+                        ArmorStandEntity armorStand = new ArmorStandEntity(entity.getEntityWorld(), entity.getX(), entity.getY() - 1.5, entity.getZ());
                         armorStand.setCustomNameVisible(true);
                         armorStand.setId(entityCounter);
                         armorStand.setInvisible(true);
-                        world.addEntity(entityCounter, armorStand);
+                        world.addEntity(armorStand);
 
                         varEntityMap.put(entity, armorStand);
                         varEntityList.add(armorStand);

@@ -50,7 +50,7 @@ public class PlayerMessageSender {
      */
     public void add(String color, String s) {
         s = StringUtils.translate(s.replace("%", "%%"));
-        MesList.add(new LiteralText(s).setStyle(Style.EMPTY.withColor(TextColor.parse(color))));
+        MesList.add(Text.literal(s).setStyle(Style.EMPTY.withColor(TextColor.parse(color).getOrThrow())));
     }
 
     /**
@@ -101,10 +101,10 @@ public class PlayerMessageSender {
 
     public static class Tools {
         public static Text genUrlOpenText(@NotNull URL url) {
-            return new LiteralText(url.toString()).setStyle(
+            return Text.literal(url.toString()).setStyle(
                     Style.EMPTY.withClickEvent(
                                     new ClickEvent(ClickEvent.Action.OPEN_URL, url.toString()))
-                            .withColor(TextColor.parse("blue")).withUnderline(true)
+                            .withColor(TextColor.parse("blue").getOrThrow()).withUnderline(true)
             );
         }
     }

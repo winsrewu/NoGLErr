@@ -74,8 +74,8 @@ public class OnTick {
 
                     pms.add("red", "noglerr.info.versionNotSafe");
                     if (vi.checkUrl != null) {
-                        MutableText text = new LiteralText(StringUtils.translate("noglerr.info.checkUrl"))
-                                .setStyle(Style.EMPTY.withColor(TextColor.parse("red")));
+                        MutableText text =Text.literal(StringUtils.translate("noglerr.info.checkUrl"))
+                                .setStyle(Style.EMPTY.withColor(TextColor.parse("red").getOrThrow()));
                         text.append(PlayerMessageSender.Tools.genUrlOpenText(vi.checkUrl));
                         pms.add(text);
                     }
@@ -84,16 +84,16 @@ public class OnTick {
                         sb.append("\nDownLoad latest version at ").append(vi.latestDownloadUrl);
 
                         if (notSilent) {
-                            MutableText text = new LiteralText(StringUtils.translate("noglerr.info.downloadLatestVersion"));
-                            text.append(new LiteralText(vi.latestDownloadUrl.toString()).setStyle(Style.EMPTY.withClickEvent(
+                            MutableText text = Text.literal(StringUtils.translate("noglerr.info.downloadLatestVersion"));
+                            text.append(Text.literal(vi.latestDownloadUrl.toString()).setStyle(Style.EMPTY.withClickEvent(
                                     new ClickEvent(ClickEvent.Action.OPEN_URL, vi.latestDownloadUrl.toString())
-                            ).withColor(TextColor.parse("blue")).withUnderline(true)));
+                            ).withColor(TextColor.parse("blue").getOrThrow()).withUnderline(true)));
                             pms.add(text);
                         }
                     } else {
                         sb.append("\nSafe version not ready yet. Please disable your mod for now.");
 
-                        pms.add(new LiteralText(StringUtils.translate("noglerr.info.safeVersionNotReady")));
+                        pms.add(Text.literal(StringUtils.translate("noglerr.info.safeVersionNotReady")));
                     }
                     NoglerrClient.LOGGER.warn(sb.toString());
                 }
@@ -108,8 +108,8 @@ public class OnTick {
                 NoglerrClient.updateChecker.noticed();
 
                 if (!NoglerrClient.updateChecker.isSilent()) {
-                    pms.add(new LiteralText(StringUtils.translate("noglerr.info.checkFiled")).setStyle(
-                            Style.EMPTY.withColor(TextColor.parse("red"))
+                    pms.add(Text.literal(StringUtils.translate("noglerr.info.checkFiled")).setStyle(
+                            Style.EMPTY.withColor(TextColor.parse("red").getOrThrow())
                     ));
                 }
             }
