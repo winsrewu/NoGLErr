@@ -2,7 +2,6 @@ package org.jawbts.noglerr.tweak;
 
 import com.google.gson.JsonSyntaxException;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
@@ -22,7 +21,7 @@ public class Utils {
 
     public static Text createText(String s, String color) {
         // return Text.Serializer.fromJson("{\"color\":\"" + color + "\",\"text\":\"" + StringUtils.translate(s) + "\"}");
-        return new LiteralText(StringUtils.translate(s)).setStyle(Style.EMPTY.withColor(TextColor.parse(color)));
+        return Text.literal(StringUtils.translate(s)).setStyle(Style.EMPTY.withColor(TextColor.parse(color).getOrThrow()));
     }
 
     public static Text createTextFromJsonOrString(String s) {
