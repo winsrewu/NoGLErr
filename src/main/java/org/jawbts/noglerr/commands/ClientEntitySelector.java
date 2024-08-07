@@ -1,14 +1,16 @@
 package org.jawbts.noglerr.commands;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.predicate.NumberRange;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.util.TypeFilter;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import org.jawbts.noglerr.event.VarEntityHandler;
@@ -85,7 +87,15 @@ public class ClientEntitySelector {
         }
 
         Vec3d vec3d = positionOffset.apply(mc.player.getPos());
-        Predicate<Entity> predicate = getPositionPredicate(vec3d);
+        Box boxIn = getOffsetBox(vec3d);
+        Predicate<Entity> predicate;
+
+        if (senderOnly) {
+            predicate = getPositionPredicate(vec3d, boxIn, null);
+            return predicate.test(mc.player) ? List.of(mc.player) : List.of();
+        }
+
+        predicate = getPositionPredicate(vec3d, boxIn, null);
 
         List<Entity> ansList = new ArrayList<>();
         for (Entity entity : mc.world.getEntities()) {
@@ -94,7 +104,7 @@ public class ClientEntitySelector {
             }
         }
 
-        return ansList;
+        return getEntities(vec3d, ansList);
     }
 
     public List<AbstractClientPlayerEntity> getPlayers(MinecraftClient mc) {
@@ -123,13 +133,14 @@ public class ClientEntitySelector {
         }
 
         Vec3d vec3d = positionOffset.apply(mc.player.getPos());
-        Predicate<Entity> predicate = getPositionPredicate(vec3d);
+        Box boxIn = getOffsetBox(vec3d);
+        Predicate<Entity> predicate = getPositionPredicate(vec3d, boxIn, null);
         if (senderOnly) {
             ClientPlayerEntity clientPlayer = mc.player;
             if (predicate.test(clientPlayer)) {
-                return Lists.newArrayList(clientPlayer);
+                return List.of(clientPlayer);
             }
-            return Collections.emptyList();
+            return List.of();
         }
 
         List<AbstractClientPlayerEntity> ansList = new ArrayList<>();
@@ -139,26 +150,48 @@ public class ClientEntitySelector {
             }
         }
 
-        return ansList;
+        return getEntities(vec3d, ansList);
     }
 
-    private Predicate<Entity> getPositionPredicate(Vec3d vec3d) {
-        // TODO
-        throw new UnsupportedOperationException();
-//        Predicate<Entity> predicate = predicates;
-//        if (box != null) {
-//            Box box = this.box.offset(vec3d);
-//            predicate = predicate.and(entity -> box.intersects(entity.getBoundingBox()));
-//        }
-//
-//        if (!distance.isDummy()) {
-//            predicate = predicate.and(entity -> this.distance.testSqrt(entity.squaredDistanceTo(vec3d)));
-//        }
-//
-//        return predicate;
+    private Predicate<Entity> getPositionPredicate(Vec3d pos, @Nullable Box box, @Nullable FeatureSet enabledFeatures) {
+        boolean bl = enabledFeatures != null;
+        boolean bl2 = box != null;
+        boolean bl3 = !this.distance.isDummy();
+        int i = (bl ? 1 : 0) + (bl2 ? 1 : 0) + (bl3 ? 1 : 0);
+        Object list;
+        if (i == 0) {
+            list = this.predicates;
+        } else {
+            List<Predicate<Entity>> list2 = new ObjectArrayList(this.predicates.size() + i);
+            list2.addAll(this.predicates);
+            if (bl) {
+                list2.add((entity) -> entity.getType().isEnabled(enabledFeatures));
+            }
+
+            if (bl2) {
+                list2.add((entity) -> box.intersects(entity.getBoundingBox()));
+            }
+
+            if (bl3) {
+                list2.add((entity) -> this.distance.testSqrt(entity.squaredDistanceTo(pos)));
+            }
+
+            list = list2;
+        }
+
+        return Util.allOf((List)list);
     }
 
-    private void appendEntitiesFromWorld(List<Entity> list, ClientWorld clientWorld, Vec3d vec3d, Predicate<Entity> predicate) {
-        list.addAll(clientWorld.getEntitiesByType(entityFilter, box == null ? null : box.offset(vec3d), predicate));
+    @Nullable
+    private Box getOffsetBox(Vec3d offset) {
+        return box != null ? box.offset(offset) : null;
+    }
+
+    private <T extends Entity> List<T> getEntities(Vec3d pos, List<T> entities) {
+        if (entities.size() > 1) {
+            this.sorter.accept(pos, entities);
+        }
+
+        return entities.subList(0, Math.min(this.limit, entities.size()));
     }
 }
