@@ -2,8 +2,10 @@ package org.jawbts.noglerr.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import org.jawbts.noglerr.tweak.Utils;
 import org.jawbts.noglerr.tweak.var.ScriptVarManager;
 import org.jawbts.noglerr.tweak.var.TargetManager;
@@ -59,13 +61,13 @@ public class ShowVarCommand {
                                             ))
                                     .then(literal("add")
                                             .then(argument("Name", StringArgumentType.string())
-                                                    .then(argument("Context", ClientTextArgumentType.text())
+                                                    .then(argument("Context", ClientTextArgumentType.text(registryAccess))
                                                             .executes(context -> setText(StringArgumentType.getString(context, "Name"),
                                                                     ClientTextArgumentType.getTextArgument(context, "Context"), false))
                                                     )))
                                     .then(literal("modify")
                                             .then(argument("Name", StringArgumentType.string())
-                                                    .then(argument("Context", ClientTextArgumentType.text())
+                                                    .then(argument("Context", ClientTextArgumentType.text(registryAccess))
                                                             .executes(context -> setText(StringArgumentType.getString(context, "Name"),
                                                                     ClientTextArgumentType.getTextArgument(context, "Context"), true))
                                                     )))
@@ -162,8 +164,7 @@ public class ShowVarCommand {
     }
 
     private static int setText(String name, Text text, boolean hard) {
-        // TODO Text.Serialization.toJsonString(text)
-        if (TextManager.getInstance().addData(Utils.escapeString(name), "", hard)) {
+        if (TextManager.getInstance().addData(Utils.escapeString(name), TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, text).getOrThrow().toString(), hard)) {
             pms.add("noglerr.command.succeed");
         } else {
             pms.add("red", "noglerr.command.nameAlreadyExists");

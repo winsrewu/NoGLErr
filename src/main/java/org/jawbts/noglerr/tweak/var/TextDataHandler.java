@@ -1,9 +1,10 @@
 package org.jawbts.noglerr.tweak.var;
 
+import com.mojang.serialization.JsonOps;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import org.jawbts.noglerr.tweak.Utils;
 
 import java.util.ArrayList;
@@ -69,8 +70,7 @@ public class TextDataHandler extends DataHandlerBase {
                 handler = ScriptVarManager.getInstance().getHandler(name);
             }
             if (handler == null) {
-                // TODO argListFailReason = Text.Serializer.toJson(Utils.createText("noglerr.command.varNotExists", "red"));
-                argListFailReason = "";
+                argListFailReason = TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, Utils.createText("noglerr.command.varNotExists", "red")).getOrThrow().toString();
             }
             argList.add(handler);
         }

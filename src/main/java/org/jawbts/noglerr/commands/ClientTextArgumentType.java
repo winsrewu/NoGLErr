@@ -7,6 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
@@ -18,18 +19,19 @@ import java.util.Collection;
 public class ClientTextArgumentType implements ArgumentType<Text> {
     public static final DynamicCommandExceptionType INVALID_COMPONENT_EXCEPTION = new DynamicCommandExceptionType(text -> Text.stringifiedTranslatable("argument.component.invalid", text));
     private static final Collection<String> EXAMPLES = Arrays.asList("\"hello world\"", "\"\"", "\"{\"text\":\"hello world\"}", "[\"\"]");
-    // TODO
-    private final RegistryWrapper.WrapperLookup registryLookup = null;
 
-    private ClientTextArgumentType() {
+    private final RegistryWrapper.WrapperLookup registryLookup;
+
+    private ClientTextArgumentType(RegistryWrapper.WrapperLookup registryLookup) {
+        this.registryLookup = registryLookup;
     }
 
     public static Text getTextArgument(CommandContext<FabricClientCommandSource> context, String name) {
         return context.getArgument(name, Text.class);
     }
 
-    public static ClientTextArgumentType text() {
-        return new ClientTextArgumentType();
+    public static ClientTextArgumentType text(CommandRegistryAccess registryAccess) {
+        return new ClientTextArgumentType(registryAccess);
     }
 
     public Text parse(StringReader stringReader) throws CommandSyntaxException {

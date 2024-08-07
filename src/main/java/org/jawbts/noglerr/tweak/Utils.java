@@ -1,9 +1,12 @@
 package org.jawbts.noglerr.tweak;
 
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.JsonOps;
 import fi.dy.masa.malilib.util.StringUtils;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.text.TextColor;
 import org.jawbts.noglerr.event.ClientTickHandler;
 
@@ -26,8 +29,7 @@ public class Utils {
 
     public static Text createTextFromJsonOrString(String s) {
         try {
-            // TODO return Text.Serializer.fromJson(s);
-            return Text.of("");
+            return TextCodecs.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(s)).getOrThrow();
         } catch (JsonSyntaxException e) {
             return Text.of(s);
         }
