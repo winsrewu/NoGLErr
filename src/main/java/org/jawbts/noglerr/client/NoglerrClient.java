@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class NoglerrClient implements ClientModInitializer {
     public static final String MOD_ID = "noglerr";
     public static final String MOD_NAME = "NoGLErr";
-    public static final String MOD_BRANCH_ID = "fabric-1.17.x";
+    public static final String MOD_BRANCH_ID = "fabric-1.21";
 
     public static final String MOD_VERSION = StringUtils.getModVersionString(MOD_ID);
 
