@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IHotkeyTogglable;
 import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
+import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.util.StringUtils;
 
@@ -37,13 +38,28 @@ public class Configs {
                 StringUtils.translate("noglerr.comments.gui.voiceToTextFormat"));
         public static final ConfigString VOICE_TO_TEXT_PATH = new ConfigString("noglerr.tweaks.voiceToTextPath", "",
                 StringUtils.translate("noglerr.comments.gui.voiceToTextPath"));
+        public static final ConfigInteger MICROPHONE_SAMPLE_RATE = new ConfigInteger("noglerr.tweaks.microphoneSampleRate", 60000,
+                StringUtils.translate("noglerr.comments.gui.microphoneSampleRate"));
+        public static final ConfigInteger MICROPHONE_SAMPLE_SIZE_IN_BITS = new ConfigInteger("noglerr.tweaks.microphoneSampleSizeInBits", 16,
+                StringUtils.translate("noglerr.comments.gui.microphoneSampleSizeInBits"));
+        public static final ConfigInteger MICROPHONE_FRAME_SIZE = new ConfigInteger("noglerr.tweaks.microphoneFrameSize", 4,
+                StringUtils.translate("noglerr.comments.gui.microphoneFrameSize"));
+        public static final ConfigInteger MICROPHONE_FRAME_RATE = new ConfigInteger("noglerr.tweaks.microphoneFrameRate", 44100,
+                StringUtils.translate("noglerr.comments.gui.microphoneFrameRate"));
+        public static final ConfigInteger MICROPHONE_CHANNELS = new ConfigInteger("noglerr.tweaks.microphoneChannels", 2,
+                StringUtils.translate("noglerr.comments.gui.microphoneChannels"));
 
         public static final List<IConfigBase> OPTIONS = ImmutableList.of(
                 VOICE_TO_TEXT_FORMAT,
                 VOICE_TO_TEXT_PATH,
                 SHOW_ENTITY_DETAIL_CONFIG,
                 SHOW_ENTITY_DETAIL_VAR_CONFIG,
-                SHOW_ENTITY_DETAIL_TARGET_CONFIG
+                SHOW_ENTITY_DETAIL_TARGET_CONFIG,
+                MICROPHONE_SAMPLE_RATE,
+                MICROPHONE_SAMPLE_SIZE_IN_BITS,
+                MICROPHONE_FRAME_SIZE,
+                MICROPHONE_FRAME_RATE,
+                MICROPHONE_CHANNELS
         );
     }
 
@@ -74,6 +90,18 @@ public class Configs {
                 SHOW_ENTITY_DETAIL,
                 SHOW_VFX,
                 DEBUG
+        );
+    }
+
+    public static class Secrets {
+        public static final ConfigString VOSK_PASSWORD = new ConfigString("noglerr.tweaks.voskPassword", "",
+                StringUtils.translate("noglerr.comments.gui.voskPassword"));
+        public static final ConfigString VOSK_IP = new ConfigString("noglerr.tweaks.voskIp", "127.0.0.1:25550",
+                StringUtils.translate("noglerr.comments.gui.voskIp"));
+
+        public static final List<IConfigBase> OPTIONS = ImmutableList.of(
+                VOSK_PASSWORD,
+                VOSK_IP
         );
     }
 }

@@ -7,7 +7,8 @@ public enum Category {
     GENERIC("noglerr.gui.title.generic"),
     DETAILED("noglerr.gui.title.detailed"),
     TOGGLE_HOTKEYS("noglerr.gui.title.toggleHotkeys"),
-    TOGGLES("noglerr.gui.title.toggles");
+    TOGGLES("noglerr.gui.title.toggles"),
+    SECRETS("noglerr.gui.title.secrets");
 
     private final String translationKey;
 

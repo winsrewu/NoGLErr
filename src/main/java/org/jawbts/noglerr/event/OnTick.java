@@ -42,7 +42,7 @@ public class OnTick {
         }
 
         // Voice To Text tick
-        Vosk.tick();
+        Vosk.getInstance().tick();
     }
 
     public static void onTick32() {

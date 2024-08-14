@@ -11,8 +11,12 @@ for something special and strange.
 Don't mind the name, it's just one of its deprecated features, and it's the first  
 So it becomes the name of the project
 
+Since 1.0.8, you need to download the mod from modrinth.  
+自1.0.8开始, 你需要去modrinth下载这个模组.  
+https://modrinth.com/mod/noglerr
+
 # 版权
-此模组自 1.0.5 开始集成了 vosk 的库, 感谢他们  
+此模组自 1.0.5 开始, 1.0.9 结束, 集成了 vosk 的库, 感谢他们  
 https://github.com/alphacep/vosk-api/tree/master/java/demo  
 此模组自 1.0.7 开始集成了 openjdk 的 nashorn , 感谢他们  
 https://github.com/openjdk/nashorn
@@ -70,4 +74,7 @@ world.time Long 世界时间, tick为单位
 首先在 .minecraft/voskModels 下载模型 https://alphacephei.com/vosk/models  
 记得解压 完成应该有这样一个文件 voskModels\xxx\README  
 使用 /vosk reload 重载模型  
-其他的看配置界面
+其他的看配置界面  
+1.0.9更新之后, 这个就是一坨屎, 建议你不要用.
+当然如果你擅长捣鼓, 那么你就会发现这个其实是能用的.
+为什么我会这么做呢? 因为我的电脑的算力和内存不支持我.

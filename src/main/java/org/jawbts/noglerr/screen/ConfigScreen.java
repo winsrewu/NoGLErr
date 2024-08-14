@@ -79,6 +79,8 @@ public class ConfigScreen extends GuiConfigsBase {
             configs = ConfigUtils.createConfigWrapperForType(ConfigType.BOOLEAN, ImmutableList.copyOf(Configs.Toggles.OPTIONS));
         } else if (tab == Category.TOGGLE_HOTKEYS) {
             configs = ConfigUtils.createConfigWrapperForType(ConfigType.HOTKEY, ImmutableList.copyOf(Configs.Toggles.OPTIONS));
+        } else if (tab == Category.SECRETS) {
+            configs = Configs.Secrets.OPTIONS;
         } else {
             return Collections.emptyList();
         }

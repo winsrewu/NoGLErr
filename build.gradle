@@ -46,14 +46,13 @@ dependencies {
 
     modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.malilib_minecraft_version}:${project.malilib_version}"
 
-    implementation group: "com.alphacephei", name: "vosk", version: project.vosk_version
     implementation group: "org.openjdk.nashorn", name: "nashorn-core", version: project.nashorn_version
 }
 
 shadowJar {
     dependencies {
         exclude(dependency {
-            it.moduleGroup != "com.alphacephei" && it.moduleGroup != "org.openjdk.nashorn"
+            it.moduleGroup != "org.openjdk.nashorn"
         })
     }
 }
