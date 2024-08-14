@@ -4,36 +4,36 @@ import net.minecraft.client.MinecraftClient;
 import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.event.ClientTickHandler;
 import org.jawbts.noglerr.tweak.Utils;
+import org.jawbts.noglerr.util.PlayerMessageSender;
 
-import java.io.File;
-import java.sql.Timestamp;
+import javax.crypto.*;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 
 public class Vosk {
     private static final Vosk INSTANCE = new Vosk();
-    private static final Timestamp sendCloseTime = new Timestamp(System.currentTimeMillis());
-    private static VoskThread voskThread;
-    private static boolean needStart = false;
-    private static boolean needSend = false;
-    private static boolean preNeedSend = false;
+    private VoskThread voskThread = null;
 
     public static Vosk getInstance() {
         return INSTANCE;
     }
 
-    public static void setStatus(boolean needStart, boolean needSend) {
-        Vosk.needStart = needStart;
-        Vosk.needSend = needSend;
-    }
-
-    public static void tick() {
+    public void tick() {
         if (!Utils.gameReadyCheck()) {
             return;
         }
-        setStatus(Configs.Toggles.VOICE_TO_TEXT.getBooleanValue(), Configs.Toggles.MICROPHONE_SWITCH.getBooleanValue());
+        boolean needStart = Configs.Toggles.VOICE_TO_TEXT.getBooleanValue();
+        boolean needSend = Configs.Toggles.MICROPHONE_SWITCH.getBooleanValue();
 
         if (!needStart) {
             if (voskThread != null) {
-                voskThread.close();
+                voskThread.setShouldStop();
                 voskThread = null;
             }
             return;
@@ -42,32 +42,18 @@ public class Vosk {
             voskThread = new VoskThread();
             voskThread.start();
         }
-        if (preNeedSend != needSend) {
-            preNeedSend = needSend;
-            if (!needSend) {
-                sendCloseTime.setTime(System.currentTimeMillis());
-            } else {
-                voskThread.setNeedSend(true);
-            }
-        }
-        if (!needSend && voskThread.getNeedSend() &&
-                sendCloseTime.before(new Timestamp(System.currentTimeMillis() - 500L))) {
-            voskThread.setNeedSend(false);
-        }
+        voskThread.setMicrophone(needSend);
     }
 
-    public void init() {
-        File folder = new File("./", "voskModels");
-        folder.mkdir();
-    }
-
-    // TODO 这里会爆null, 记得修
     public void reload() {
-        voskThread.needReload();
+        if (voskThread == null) return;
+        voskThread.setShouldStop();
+        while(voskThread.isRunning());
+        voskThread = new VoskThread();
     }
 
     public void sendToChat(String s) {
-        Utils.gameReadyCheck();
+        if (!Utils.gameReadyCheck()) return;
 
         MinecraftClient mc = ClientTickHandler.mc;
         if (mc == null || mc.player == null) {
@@ -81,12 +67,62 @@ public class Vosk {
         try {
             s = String.format(Configs.Detailed.VOICE_TO_TEXT_FORMAT.getStringValue(), s);
         } catch (Exception e) {
-            s = "Format Err";
+            s = "[Format Error]";
         }
 
         if (!Configs.Toggles.VOICE_TO_TEXT_NO_HISTORY.getBooleanValue()) {
             mc.inGameHud.getChatHud().addToMessageHistory(s);
         }
         mc.player.sendChatMessage(s);
+    }
+
+    public String decrypt(String password, String s) {
+        PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
+        SecretKeyFactory factory;
+        Key key;
+
+        byte[] salt = Base64.getUrlDecoder().decode(s.substring(0, 12));
+
+        try {
+            factory = SecretKeyFactory.getInstance("PBEWITHMD5andDES");
+        } catch (NoSuchAlgorithmException e) {
+            // 这不应该发生
+            throw new RuntimeException(e);
+        }
+
+        try {
+            key = factory.generateSecret(pbeKeySpec);
+        } catch (InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
+
+        Cipher cipher;
+        try {
+            cipher = Cipher.getInstance("PBEWITHMD5andDES");
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            // 这不应该发生
+            throw new RuntimeException(e);
+        }
+
+        PBEParameterSpec pbeParameterSpec = new PBEParameterSpec(salt,100);
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, key, pbeParameterSpec);
+        } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
+            // 这不应该发生
+            throw new RuntimeException(e);
+        }
+
+        byte[] result = Base64.getUrlDecoder().decode(s.substring(12));
+        try {
+            result = cipher.doFinal(result);
+        } catch (IllegalBlockSizeException e) {
+            // 这不应该发生
+            throw new RuntimeException(e);
+        } catch (BadPaddingException e) {
+            PlayerMessageSender.getInstance().add("red", "noglerr.info.wrongVoskPassword");
+            return "";
+        }
+
+        return new String(result);
     }
 }

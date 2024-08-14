@@ -51,9 +51,6 @@ public class NoglerrClient implements ClientModInitializer {
 
         Callbacks.init(MinecraftClient.getInstance());
 
-        // 语音识别初始化
-        Vosk.getInstance().init();
-
         // Script Vars 初始化
         ScriptVarManager.getInstance().reload();
     }
