@@ -1,5 +1,9 @@
 package org.jawbts.noglerr.tweak.var.javascript.proxy;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
@@ -7,6 +11,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
@@ -40,9 +45,8 @@ import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -1273,5 +1277,9 @@ public class Entity {
 
     public String getNbt() {
         return writeNbt(new NbtCompound()).asString();
+    }
+
+    public int getAge() {
+        return entity.age;
     }
 }
