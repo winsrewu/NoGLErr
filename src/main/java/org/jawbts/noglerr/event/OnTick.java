@@ -64,7 +64,15 @@ public class OnTick {
                 if (vi.isOutDated(NoglerrClient.MOD_VERSION)) {
                     perfect = false;
                     NoglerrClient.LOGGER.warn("Current noglerr version out dated.");
-                    if (notSilent) pms.add("red", "noglerr.info.versionOutDated");
+                    if (notSilent) {
+                        pms.add("red", "noglerr.info.versionOutDated");
+
+                        MutableText text = new LiteralText(StringUtils.translate("noglerr.info.downloadLatestVersion"));
+                        text.append(new LiteralText(vi.latestDownloadUrl.toString()).setStyle(Style.EMPTY.withClickEvent(
+                                new ClickEvent(ClickEvent.Action.OPEN_URL, vi.latestDownloadUrl.toString())
+                        ).withColor(TextColor.parse("blue")).withUnderline(true)));
+                        pms.add(text);
+                    }
                 }
                 if (vi.isNotSafe(NoglerrClient.MOD_VERSION)) {
                     perfect = false;
