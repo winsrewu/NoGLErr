@@ -56,7 +56,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class World {
-    private final net.minecraft.world.World world;
+    public final net.minecraft.world.World world;
 
     public World(net.minecraft.world.World world) {
         this.world = world;

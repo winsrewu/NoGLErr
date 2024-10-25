@@ -51,7 +51,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class Entity {
-    private final net.minecraft.entity.Entity entity;
+    public final net.minecraft.entity.Entity entity;
 
     public Entity(net.minecraft.entity.Entity entity) {
         this.entity = entity;
