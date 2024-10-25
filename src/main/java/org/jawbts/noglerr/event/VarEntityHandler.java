@@ -28,46 +28,53 @@ public class VarEntityHandler {
         return varEntityList.contains(e);
     }
 
+    private static void addVarEntity(Entity entity, ClientWorld world) {
+        while (world.getEntityById(entityCounter) != null) {
+            entityCounter++;
+        }
+
+        ArmorStandEntity armorStand = new ArmorStandEntity(entity.world, entity.getX(), entity.getY() - 1.5, entity.getZ());
+        armorStand.setCustomNameVisible(true);
+        armorStand.setId(entityCounter);
+        armorStand.setInvisible(true);
+        world.addEntity(entityCounter, armorStand);
+
+        varEntityMap.put(entity, armorStand);
+        varEntityList.add(armorStand);
+    }
+
     public static void handleEntityDetail(MinecraftClient mc, ClientPlayerEntity player, ClientWorld world) {
         for (TargetDataHandler targetDataHandler : TargetManager.getInstance().getHandlerList()) {
             TextDataHandler textDataHandler = TextManager.getInstance().getHandler(targetDataHandler.getName());
 
             try {
                 for (Entity entity : targetDataHandler.getEntities()) {
-                    if (varEntityMap.containsKey(entity)) {
-                        Entity varShower = varEntityMap.get(entity);
-                        if (varShower == null) {
-                            varEntityMap.remove(entity);
-                            continue;
-                        }
+                    if (!varEntityMap.containsKey(entity)) addVarEntity(entity, world);
+                    else if (!varEntityMap.get(entity).getEntityWorld().equals(entity.getEntityWorld())) {
+                        varEntityMap.remove(entity);
+                        varEntityList.remove(varEntityMap.get(entity));
+                        addVarEntity(entity, world);
+                    }
 
-                        varShower.ignoreCameraFrustum = player.squaredDistanceTo(varShower) < 100;
+                    Entity varShower = varEntityMap.get(entity);
+                    if (varShower == null) {
+                        varEntityMap.remove(entity);
+                        varEntityList.remove(null);
+                        continue;
+                    }
 
-                        varShower.setPos(entity.getX(), entity.getY() - 1.7 + entity.getHeight(), entity.getZ());
-                        if (textDataHandler == null) {
-                            varShower.setCustomName(Utils.createText("noglerr.command.textNotExists", "red"));
-                            continue;
-                        }
+                    varShower.ignoreCameraFrustum = player.squaredDistanceTo(varShower) < 100;
 
-                        try {
-                            varShower.setCustomName(Utils.createTextFromJsonOrString(textDataHandler.getTreatedData(entity, world, player)));
-                        } catch (JsonSyntaxException e) {
-                            varShower.setCustomName(Utils.createText("noglerr.command.textNotJson", "red"));
-                        }
+                    varShower.setPos(entity.getX(), entity.getY() - 1.7 + entity.getHeight(), entity.getZ());
+                    if (textDataHandler == null) {
+                        varShower.setCustomName(Utils.createText("noglerr.command.textNotExists", "red"));
+                        continue;
+                    }
 
-                    } else {
-                        while (world.getEntityById(entityCounter) != null) {
-                            entityCounter++;
-                        }
-
-                        ArmorStandEntity armorStand = new ArmorStandEntity(entity.world, entity.getX(), entity.getY() - 1.5, entity.getZ());
-                        armorStand.setCustomNameVisible(true);
-                        armorStand.setId(entityCounter);
-                        armorStand.setInvisible(true);
-                        world.addEntity(entityCounter, armorStand);
-
-                        varEntityMap.put(entity, armorStand);
-                        varEntityList.add(armorStand);
+                    try {
+                        varShower.setCustomName(Utils.createTextFromJsonOrString(textDataHandler.getTreatedData(entity, world, player)));
+                    } catch (JsonSyntaxException e) {
+                        varShower.setCustomName(Utils.createText("noglerr.command.textNotJson", "red"));
                     }
                 }
             } catch (CommandSyntaxException e) {
