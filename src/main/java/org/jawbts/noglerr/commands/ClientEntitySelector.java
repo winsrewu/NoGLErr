@@ -11,6 +11,7 @@ import net.minecraft.predicate.NumberRange;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import org.jawbts.noglerr.event.EntityHandler;
 import org.jawbts.noglerr.event.VarEntityHandler;
 import org.jawbts.noglerr.mixin.EntitySelectorAccessor;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +90,7 @@ public class ClientEntitySelector {
 
         List<Entity> ansList = new ArrayList<>();
         for (Entity entity : mc.world.getEntities()) {
-            if (predicate.test(entity) && !VarEntityHandler.isVarEntity(entity)) {
+            if (predicate.test(entity) && !EntityHandler.getInstance().isNoglerrEntity(entity)) {
                 ansList.add(entity);
             }
         }

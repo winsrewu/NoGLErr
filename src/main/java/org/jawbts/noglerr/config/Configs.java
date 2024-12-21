@@ -82,6 +82,9 @@ public class Configs {
         public static final ConfigBooleanHotkeyed MICROPHONE_SWITCH = new ConfigBooleanHotkeyed("noglerr.tweaks.microphoneSwitch", false, "",
                 StringUtils.translate("noglerr.comments.gui.microphoneSwitch"));
 
+        public static final ConfigBooleanHotkeyed BOW_ASSISTANT = new ConfigBooleanHotkeyed("noglerr.tweaks.bowAssistant", false, "",
+                StringUtils.translate("noglerr.comments.gui.bowAssistant"));
+
         public static final List<IHotkeyTogglable> OPTIONS = ImmutableList.of(
                 MICROPHONE_SWITCH,
                 VOICE_TO_TEXT,
@@ -89,7 +92,8 @@ public class Configs {
                 VOICE_TO_TEXT_NO_HISTORY,
                 SHOW_ENTITY_DETAIL,
                 SHOW_VFX,
-                DEBUG
+                DEBUG,
+                BOW_ASSISTANT
         );
     }
 

@@ -22,16 +22,9 @@ import java.util.Map;
 public class VarEntityHandler {
     private static final Map<Entity, Entity> varEntityMap = new HashMap<>();
     private static final List<Entity> varEntityList = new ArrayList<>();
-    private static int entityCounter = 0;
-
-    public static boolean isVarEntity(Entity e) {
-        return varEntityList.contains(e);
-    }
 
     private static void addVarEntity(Entity entity, ClientWorld world) {
-        while (world.getEntityById(entityCounter) != null) {
-            entityCounter++;
-        }
+        int entityCounter = EntityHandler.getInstance().getNextEntityId(world);
 
         ArmorStandEntity armorStand = new ArmorStandEntity(entity.world, entity.getX(), entity.getY() - 1.5, entity.getZ());
         armorStand.setCustomNameVisible(true);
@@ -41,6 +34,7 @@ public class VarEntityHandler {
 
         varEntityMap.put(entity, armorStand);
         varEntityList.add(armorStand);
+        EntityHandler.getInstance().addEntity(armorStand);
     }
 
     public static void handleEntityDetail(MinecraftClient mc, ClientPlayerEntity player, ClientWorld world) {
@@ -53,6 +47,7 @@ public class VarEntityHandler {
                     else if (!varEntityMap.get(entity).getEntityWorld().equals(entity.getEntityWorld())) {
                         varEntityMap.remove(entity);
                         varEntityList.remove(varEntityMap.get(entity));
+                        EntityHandler.getInstance().removeEntity(varEntityMap.get(entity));
                         addVarEntity(entity, world);
                     }
 
@@ -60,6 +55,7 @@ public class VarEntityHandler {
                     if (varShower == null) {
                         varEntityMap.remove(entity);
                         varEntityList.remove(null);
+                        EntityHandler.getInstance().removeEntity(null);
                         continue;
                     }
 
@@ -91,6 +87,9 @@ public class VarEntityHandler {
                         varEntityMap.remove(entry.getKey());
                         needDel.add(e1);
                         e1.setRemoved(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+                        if (mc.world != null) {
+                            mc.world.removeEntity(e1.getId(), Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+                        }
                         break;
                     }
                 }
@@ -98,6 +97,7 @@ public class VarEntityHandler {
 
             for (Entity e : needDel) {
                 varEntityList.remove(e);
+                EntityHandler.getInstance().removeEntity(e);
             }
         }
     }
@@ -109,6 +109,10 @@ public class VarEntityHandler {
 
         for (Entity e : varEntityList) {
             e.setRemoved(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+            if (MinecraftClient.getInstance().world != null) {
+                MinecraftClient.getInstance().world.removeEntity(e.getId(), Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+            }
+            EntityHandler.getInstance().removeEntity(e);
         }
         varEntityMap.clear();
         varEntityList.clear();

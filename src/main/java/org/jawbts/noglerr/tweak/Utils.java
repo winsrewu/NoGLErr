@@ -90,4 +90,16 @@ public class Utils {
             }
         }
     }
+
+    /**
+     * 将角度转为-180~180的角度
+     * @param angle 输入角度, 必须在0~360之间
+     * @return 输出角度, 范围为-180~180
+     */
+    public static double toLowestModifyDegree(double angle) {
+        if (angle > 180) {
+            return angle - 360;
+        }
+        return angle;
+    }
 }

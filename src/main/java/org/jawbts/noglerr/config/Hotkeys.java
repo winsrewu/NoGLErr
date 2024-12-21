@@ -10,7 +10,11 @@ public class Hotkeys {
     public static final ConfigHotkey MENU_OPEN_KEY = new ConfigHotkey("noglerr.hotkeys.openConfigScreen", "N,G,C",
             StringUtils.translate("noglerr.comments.gui.openConfigScreen"));
 
+    public static final ConfigHotkey PROJECTILE_ASSISTANT_SELECT_TARGET_KEY = new ConfigHotkey("noglerr.hotkeys.selectProjectileAssistantTarget", "BUTTON_1",
+            StringUtils.translate("noglerr.comments.gui.selectProjectileAssistantTarget"));
+
     public static final List<ConfigHotkey> GENERIC_HOTKEY_LIST = ImmutableList.of(
-            MENU_OPEN_KEY
+            MENU_OPEN_KEY,
+            PROJECTILE_ASSISTANT_SELECT_TARGET_KEY
     );
 }

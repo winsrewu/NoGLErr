@@ -44,6 +44,8 @@
   "noglerr.comments.gui.microphoneFrameRate": "对于具有此格式的声音，每秒播放或录制的帧数. (Javadoc)",
   "noglerr.comments.gui.voskPassword": "用来解密语音识别结果的密码. 别告诉任何人!",
   "noglerr.comments.gui.voskIp": "Vosk服务器的ip地址",
+  "noglerr.comments.gui.bowAssistant": "辅助射箭",
+  "noglerr.comments.gui.selectProjectileAssistantTarget": "选择投掷物助手目标",
   "noglerr.tweaks.showEntityDetailConfig": "显示实体详细信息配置",
   "noglerr.tweaks.showVFX": "显示视觉效果",
   "noglerr.tweaks.showEntityDetail": "显示实体详细信息",
@@ -62,6 +64,7 @@
   "noglerr.tweaks.microphoneFrameSize": "麦克风声音每帧大小",
   "noglerr.tweaks.microphoneFrameRate": "麦克风帧率",
   "noglerr.tweaks.voskPassword": "Vosk 密码",
+  "noglerr.tweaks.bowAssistant": "弓箭助手",
   "noglerr.info.versionOutDated": "Noglerr 模组有可用更新.",
   "noglerr.tweaks.microphoneChannels": "麦克风音道数",
   "noglerr.tweaks.voskIp": "Vosk 服务器ip地址",
@@ -72,5 +75,6 @@
   "noglerr.info.checkFiled": "更新检测失败, 请检查您的日志.",
   "noglerr.info.versionPerfect": "Noglerr 是最新安全版本.",
   "noglerr.info.wrongVoskPassword": "错误的Vosk密码",
-  "noglerr.hotkeys.openConfigScreen": "打开配置界面"
+  "noglerr.hotkeys.openConfigScreen": "打开配置界面",
+  "noglerr.hotkeys.selectProjectileAssistantTarget": "选择投掷物助手目标"
 }

@@ -64,6 +64,8 @@ public class ConfigHandler implements IConfigHandler {
         if (!TextManager.getEditor().setListFromJson(Configs.Detailed.SHOW_ENTITY_DETAIL_CONFIG.getStringValue())) {
             PlayerMessageSender.getInstance().add("red", "noglerr.command.readTextListFailed");
         }
+
+        saveFile();
     }
 
     @Override

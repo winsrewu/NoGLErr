@@ -7,12 +7,15 @@ import fi.dy.masa.malilib.hotkeys.KeyAction;
 import net.minecraft.client.MinecraftClient;
 import org.jawbts.noglerr.config.Hotkeys;
 import org.jawbts.noglerr.screen.ConfigScreen;
+import org.jawbts.noglerr.tweak.assistant.ProjectileEntityAssistantManager;
+import org.jawbts.noglerr.util.PlayerMessageSender;
 
 public class Callbacks {
     public static void init(MinecraftClient mc) {
         IHotkeyCallback callbackGeneric = new KeyCallbackHotkeysGeneric(mc);
 
         Hotkeys.MENU_OPEN_KEY.getKeybind().setCallback(callbackGeneric);
+        Hotkeys.PROJECTILE_ASSISTANT_SELECT_TARGET_KEY.getKeybind().setCallback(callbackGeneric);
     }
 
     private static class KeyCallbackHotkeysGeneric implements IHotkeyCallback {
@@ -27,6 +30,10 @@ public class Callbacks {
             if (key == Hotkeys.MENU_OPEN_KEY.getKeybind()) {
                 GuiBase.openGui(new ConfigScreen());
                 return true;
+            }
+
+            if (key == Hotkeys.PROJECTILE_ASSISTANT_SELECT_TARGET_KEY.getKeybind()) {
+                return ProjectileEntityAssistantManager.getInstance().onLeftClick();
             }
 
             return false;

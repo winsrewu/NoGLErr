@@ -16,7 +16,6 @@ import org.jawbts.noglerr.event.Callbacks;
 import org.jawbts.noglerr.event.ClientTickHandler;
 import org.jawbts.noglerr.event.InputHandler;
 import org.jawbts.noglerr.tweak.var.ScriptVarManager;
-import org.jawbts.noglerr.tweak.voice.Vosk;
 import org.jawbts.noglerr.util.UpdateChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

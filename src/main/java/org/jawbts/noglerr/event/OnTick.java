@@ -7,7 +7,9 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.text.*;
 import org.jawbts.noglerr.client.NoglerrClient;
 import org.jawbts.noglerr.config.Configs;
+import org.jawbts.noglerr.tweak.EntityTracer;
 import org.jawbts.noglerr.tweak.Utils;
+import org.jawbts.noglerr.tweak.assistant.ProjectileEntityAssistantManager;
 import org.jawbts.noglerr.tweak.voice.Vosk;
 import org.jawbts.noglerr.util.PlayerMessageSender;
 import org.jawbts.noglerr.util.UpdateChecker;
@@ -23,6 +25,7 @@ public class OnTick {
 
         if ((world.getTime() >> 5 & 1) == 0) {
             onTick32();
+            EntityHandler.getInstance().tick32();
         }
 
         // 处理堆积的全局消息发送给给玩家
@@ -43,6 +46,11 @@ public class OnTick {
 
         // Voice To Text tick
         Vosk.getInstance().tick();
+
+        // Projectile Entity Assistant tick
+        ProjectileEntityAssistantManager.getInstance().tick(player, mc);
+
+        EntityTracer.tickAll();
     }
 
     public static void onTick32() {
