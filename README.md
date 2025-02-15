@@ -98,6 +98,13 @@ this.id Int 实体id
 this.age Int 实体存活时间  
 world.time Long 世界时间, tick为单位
 
+### js脚本
+建议你去翻一翻这个仓库的代码
+(主要内容在 org.jawbts.noglerr.tweak.var.javascript 包下, 
+还有一点在 org.jawbts.noglerr.tweak.var.ScriptVarManager 类里面),
+同时学习一下nashorn是怎么用的, 
+你就会发现这玩意还挺好用的 (至少对我来说)
+
 ### 语音转文字
 首先在 .minecraft/voskModels 下载模型 https://alphacephei.com/vosk/models  
 记得解压 完成应该有这样一个文件 voskModels\xxx\README  
