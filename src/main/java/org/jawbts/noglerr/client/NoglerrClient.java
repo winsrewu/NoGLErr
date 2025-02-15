@@ -50,6 +50,9 @@ public class NoglerrClient implements ClientModInitializer {
 
         Callbacks.init(MinecraftClient.getInstance());
 
+        // 直接读取config, 去你的malilib(它会自动读取), 我看过代码了应该不会出问题, 没有一定要在mc加载完后再加载
+        ConfigHandler.loadFile();
+
         // Script Vars 初始化
         ScriptVarManager.getInstance().reload();
     }
