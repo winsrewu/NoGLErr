@@ -1,3 +1,31 @@
+**Warning:**  
+This Minecraft mod is provided as-is, and its use carries certain risks. Please read the following carefully before proceeding:
+
+1. **Server Ban Risk:**  
+   Using this mod on a server may result in a ban, depending on the server's rules and policies. Ensure you have explicit permission from the server administrator before installing or using this mod.
+
+2. **Potential Harm to Your Computer:**  
+   Incorrect usage or installation of this mod may cause irreversible damage to your computer, including but not limited to data loss, system instability, or hardware issues. Use it at your own risk.
+
+3. **No Liability:**  
+   The developer of this mod is not responsible for any consequences arising from its use, including bans, data loss, or damage to your computer or server. By using this mod, you acknowledge that you understand the risks and accept full responsibility for your actions.
+
+**Proceed with caution.** Make sure you know what you are doing and that your server administrator is aware of and approves your use of this mod. If you are unsure, do not use it.
+
+**警告：**  
+本 Minecraft 模组按“原样”提供，使用它可能带来一定的风险。请在继续之前仔细阅读以下内容：
+
+1. **服务器封禁风险：**  
+   在服务器上使用此模组可能导致封禁，具体取决于服务器的规则和政策。在使用或安装此模组之前，请确保已获得服务器管理员的明确许可。
+
+2. **对计算机的潜在危害：**  
+   不正确使用或安装此模组可能会对您的计算机造成不可逆的损害，包括但不限于数据丢失、系统不稳定或硬件问题。使用此模组需自行承担风险。
+
+3. **免责声明：**  
+   本模组的开发者不对因使用此模组而产生的任何后果负责，包括但不限于封禁、数据丢失或对计算机或服务器的损害。使用此模组即表示您已了解相关风险，并愿意为自己的行为承担全部责任。
+
+**请谨慎操作。** 确保您清楚自己在做什么，并确保服务器管理员知晓并同意您使用此模组。如果您不确定，请不要使用。
+
 # NoGLErr
 很杂的辅助模组,
 用于一些奇奇怪怪的特定用途
