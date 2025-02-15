@@ -2,6 +2,7 @@ package org.jawbts.noglerr.tweak.var;
 
 import net.minecraft.entity.Entity;
 import org.jawbts.noglerr.client.NoglerrClient;
+import org.jawbts.noglerr.config.Configs;
 import org.jawbts.noglerr.event.ClientTickHandler;
 import org.jawbts.noglerr.tweak.var.javascript.Utils;
 import org.jawbts.noglerr.util.PlayerMessageSender;
@@ -29,6 +30,11 @@ public class ScriptVarManager {
     }
 
     public void reload() {
+        if (!Configs.Generic.ENABLE_NASHORN_ENGINE.getBooleanValue()) {
+            pms.add("Nashorn engine is disabled.");
+            return;
+        }
+
         engine = new ScriptEngineManager().getEngineByName("nashorn");
         for (File f : ScriptVarUtils.getVarFiles()) {
             try {
@@ -47,18 +53,27 @@ public class ScriptVarManager {
     }
 
     public String getRes(String name, Entity entity) throws ScriptException, NoSuchMethodException {
+        if (!Configs.Generic.ENABLE_NASHORN_ENGINE.getBooleanValue()) {
+            pms.add("Nashorn engine is disabled.");
+            return "[Nashorn engine is disabled.]";
+        }
+
         return ((Invocable) engine).invokeFunction(
                 name,
-                new org.jawbts.noglerr.tweak.var.javascript.proxy.Entity(entity),
+                entity,
                 new Utils()
         ).toString();
     }
 
     public String callFunction(String name, Object... args) {
+        if (!Configs.Generic.ENABLE_NASHORN_ENGINE.getBooleanValue()) {
+            pms.add("Nashorn engine is disabled.");
+            return "[Nashorn engine is disabled.]";
+        }
         try {
             ((Invocable) engine).invokeFunction(
                     name,
-                    new org.jawbts.noglerr.tweak.var.javascript.proxy.Entity(ClientTickHandler.player),
+                    ClientTickHandler.player,
                     new Utils(),
                     args
             );

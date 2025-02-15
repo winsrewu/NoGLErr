@@ -18,10 +18,13 @@ public class Configs {
                 StringUtils.translate("noglerr.comments.gui.enableAutoUpdateCheck"));
         public static final ConfigBoolean SILENT_UPDATE_CHECK = new ConfigBoolean("noglerr.tweaks.silentUpdateCheck", true,
                 StringUtils.translate("noglerr.comments.gui.silentUpdate"));
+        public static final ConfigBoolean ENABLE_NASHORN_ENGINE = new ConfigBoolean("noglerr.tweaks.enableNashornEngine", false,
+                StringUtils.translate("noglerr.comments.gui.enableNashornEngine"));
 
         public static final List<IConfigBase> OPTIONS = ImmutableList.of(
                 ENABLE_AUTO_UPDATE_CHECK,
-                SILENT_UPDATE_CHECK
+                SILENT_UPDATE_CHECK,
+                ENABLE_NASHORN_ENGINE
         );
     }
 
