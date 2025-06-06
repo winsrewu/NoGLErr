@@ -1,8 +1,8 @@
-package org.jawbts.noglerr.util;
+package org.jawbts.noglerr.test;
 
-import fi.dy.masa.malilib.gui.GuiBase;
 import org.jawbts.noglerr.client.NoglerrClient;
 import org.jawbts.noglerr.screen.ConfigScreen;
+import org.jawbts.noglerr.util.PlayerMessageSender;
 
 
 public class Tester {
