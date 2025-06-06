@@ -31,6 +31,10 @@ repositories {
     maven {
         url 'https://maven.aliyun.com/nexus/content/groups/public'
     }
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
+    }
 
     mavenCentral()
 
@@ -52,6 +56,8 @@ dependencies {
 
     modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.malilib_minecraft_version}:${project.malilib_version}"
 
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
     implementation group: "org.openjdk.nashorn", name: "nashorn-core", version: project.nashorn_version
 }
 
@@ -59,7 +65,8 @@ processResources {
     def properties = [
             version: project.version,
             malilib_version: malilib_version,
-            fabric_loader_version: loader_version
+            fabric_loader_version: loader_version,
+            modmenu_version: modmenu_version,
     ]
     inputs.properties properties
 
@@ -165,6 +172,7 @@ tasks.register('shadowJarWithTests', ShadowJar) {
 
 tasks.register('remapShadowJarWithTests', RemapJarTask) {
     destinationDirectory.set(file("$buildDir/libs/test"))
+    archiveClassifier.set("test")
 
     dependsOn(shadowJarWithTests)
     mustRunAfter(shadowJarWithTests)
