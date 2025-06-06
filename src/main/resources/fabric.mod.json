@@ -16,6 +16,9 @@
   "entrypoints": {
     "client": [
       "org.jawbts.noglerr.client.NoglerrClient"
+    ],
+    "modmenu": [
+      "org.jawbts.noglerr.client.ModMenuApiImpl"
     ]
   },
   "mixins": [
@@ -26,5 +29,8 @@
     "fabric": "*",
     "minecraft": "1.17.x",
     "malilib": ">=${malilib_version}"
+  },
+  "suggests": {
+    "modmenu": ">=${modmenu_version}"
   }
 }
