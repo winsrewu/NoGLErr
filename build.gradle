@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
@@ -10,19 +11,28 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-    maven {
-        url 'https://masa.dy.fi/maven'
-    }
-
-    // maven 仓库加速
     mavenLocal()
+
+    maven {
+        url 'https://maven.aliyun.com/nexus/content/repositories/central/'
+    }
     maven {
         url 'https://maven.aliyun.com/repository/public/'
     }
-    mavenCentral()
+    maven {
+        url 'https://masa.dy.fi/maven'
+    }
     maven {
         url 'https://maven.aliyun.com/repository/gradle-plugin'
     }
+    maven {
+        url 'https://repository.hanbings.io/proxy'
+    }
+    maven {
+        url 'https://maven.aliyun.com/nexus/content/groups/public'
+    }
+
+    mavenCentral()
 
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -43,14 +53,6 @@ dependencies {
     modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.malilib_minecraft_version}:${project.malilib_version}"
 
     implementation group: "org.openjdk.nashorn", name: "nashorn-core", version: project.nashorn_version
-}
-
-shadowJar {
-    dependencies {
-        exclude(dependency {
-            it.moduleGroup != "org.openjdk.nashorn"
-        })
-    }
 }
 
 processResources {
@@ -87,14 +89,102 @@ java {
     // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
     // if it is present.
     // If you remove this line, sources will not be generated.
-    withSourcesJar()
+    // withSourcesJar()
 }
 
-jar {
+// --- RELEASE JAR --- //
+
+tasks.register('jarRelease', Jar) {
+    destinationDirectory.set(file("$buildDir/libs/tmp"))
+    archiveClassifier.set("release-raw")
+
+    from(sourceSets.main.output)
+}
+
+tasks.register('shadowJarRelease', ShadowJar) {
+    destinationDirectory.set(file("$buildDir/libs/tmp"))
+    archiveClassifier.set("release-shadowed")
+
+    dependsOn(jarRelease)
+    mustRunAfter(jarRelease)
+
+    from(jarRelease.archiveFile.get().asFile)
+    configurations = [project.configurations.runtimeClasspath]
+
+    dependencies {
+        exclude(dependency {
+            it.moduleGroup != "org.openjdk.nashorn"
+        })
+    }
+
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
+        rename { "LICENSE_${archivesBaseName}" }
     }
 }
+
+tasks.register('remapShadowJarRelease', RemapJarTask) {
+    dependsOn(shadowJarRelease)
+    mustRunAfter(shadowJarRelease)
+
+    input = shadowJarRelease.archiveFile
+    addNestedDependencies = true
+}
+
+assemble.dependsOn(remapShadowJarRelease)
+
+// --- TEST JAR --- //
+
+tasks.register('jarWithTests', Jar) {
+    destinationDirectory.set(file("$buildDir/libs/tmp"))
+    archiveClassifier.set("test-raw")
+
+    from(sourceSets.main.output)
+    from(sourceSets.test.output)
+}
+
+tasks.register('shadowJarWithTests', ShadowJar) {
+    destinationDirectory.set(file("$buildDir/libs/tmp"))
+    archiveClassifier.set("test-shadowed")
+
+    dependsOn(jarWithTests)
+    mustRunAfter(jarWithTests)
+
+    from(jarWithTests.archiveFile.get().asFile)
+    configurations = [project.configurations.runtimeClasspath]
+
+    dependencies {
+        exclude(dependency {
+            it.moduleGroup != "org.openjdk.nashorn"
+        })
+    }
+    
+    from("LICENSE") {
+        rename { "LICENSE_${archivesBaseName}" }
+    }
+}
+
+tasks.register('remapShadowJarWithTests', RemapJarTask) {
+    destinationDirectory.set(file("$buildDir/libs/test"))
+
+    dependsOn(shadowJarWithTests)
+    mustRunAfter(shadowJarWithTests)
+    mustRunAfter(remapShadowJarRelease) // my pc will explode if I don't do this
+
+    input = shadowJarWithTests.archiveFile
+    addNestedDependencies = true
+}
+
+assemble.dependsOn(remapShadowJarWithTests)
+
+jar {
+    dependsOn(jarRelease, jarWithTests)
+}
+
+tasks.named('remapJar').configure {
+    enabled = false
+}
+
+// --- END JAR --- //
 
 // configure the maven publication
 publishing {
@@ -112,17 +202,9 @@ publishing {
     publications {
         gpr(MavenPublication) {
             artifactId = "noglerr"
-            version = project.minecraft_version + "-fabric-" + version
+            version = minecraft_version + "-fabric-" + version
 
             from(components.java)
         }
     }
 }
-
-task("remapShadowJar", type: RemapJarTask) {
-    dependsOn(shadowJar)
-    input = shadowJar.archiveFile
-    addNestedDependencies = true
-}
-
-assemble.dependsOn(remapShadowJar)

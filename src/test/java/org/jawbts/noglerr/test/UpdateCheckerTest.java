@@ -1,4 +1,4 @@
-package org.jawbts.test;
+package org.jawbts.noglerr.test;
 
 import org.jawbts.noglerr.client.NoglerrClient;
 import org.jawbts.noglerr.util.UpdateChecker;
