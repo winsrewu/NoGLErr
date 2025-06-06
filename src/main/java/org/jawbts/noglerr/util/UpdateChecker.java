@@ -80,30 +80,28 @@ public class UpdateChecker {
                 if (res.getStatusLine().getStatusCode() >= 200 && res.getStatusLine().getStatusCode() < 300) {
                     JsonParser parser = new JsonParser();
                     jsonObject = parser.parse(entityString).getAsJsonObject();
-                    VersionInfo vi = new VersionInfo();
+                    VersionInfo.VersionInfoBuilder vb = new VersionInfo.VersionInfoBuilder();
                     jsonObject = jsonObject.get("data").getAsJsonObject();
 
-                    vi.lowestSafeVersion = jsonObject.get("lowestSafeVersion").getAsString();
+                    vb.setLowestSafeVersion(jsonObject.get("lowestSafeVersion").getAsString());
                     if (jsonObject.has("checkUrl")) {
-                        vi.checkUrl = new URL(jsonObject.get("checkUrl").getAsString());
+                        vb.setCheckUrl(new URL(jsonObject.get("checkUrl").getAsString()));
                     }
                     String branchId = NoglerrClient.MOD_BRANCH_ID;
                     jsonObject = jsonObject.get("branches").getAsJsonObject().get(branchId).getAsJsonObject();
-                    vi.latestVersion = jsonObject.get("latestVersion").getAsString();
-                    vi.latestDownloadUrl = new URL(jsonObject.get("downloadUrl").getAsString());
+                    vb.setLatestVersion(jsonObject.get("latestVersion").getAsString());
+                    vb.setLatestDownloadUrl(new URL(jsonObject.get("downloadUrl").getAsString()));
 
-                    setVersionInfo(vi);
+                    setVersionInfo(vb.build());
                 } else {
                     setFailed();
                     if (!silent) {
-                        NoglerrClient.LOGGER.error("Noglerr update check failed. Wrong status code (" +
-                                res.getStatusLine().getStatusCode() + ").");
+                        NoglerrClient.LOGGER.error("Noglerr update check failed. Wrong status code ({}).", res.getStatusLine().getStatusCode());
                     }
                 }
             } catch (Exception e) {
                 setFailed();
-                NoglerrClient.LOGGER.error("Noglerr update check failed. " + e.getMessage());
-                e.printStackTrace();
+                NoglerrClient.LOGGER.error("Noglerr update check failed." , e);
             }
         }
     }

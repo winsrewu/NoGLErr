@@ -7,6 +7,8 @@ import fi.dy.masa.malilib.util.StringUtils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.VersionParsingException;
 import net.minecraft.client.MinecraftClient;
 import org.jawbts.noglerr.commands.NoglerrCommand;
 import org.jawbts.noglerr.commands.ShowVarCommand;
@@ -17,6 +19,7 @@ import org.jawbts.noglerr.event.ClientTickHandler;
 import org.jawbts.noglerr.event.InputHandler;
 import org.jawbts.noglerr.tweak.var.ScriptVarManager;
 import org.jawbts.noglerr.util.UpdateChecker;
+import org.jawbts.noglerr.util.VersionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +29,15 @@ public class NoglerrClient implements ClientModInitializer {
     public static final String MOD_NAME = "NoGLErr";
     public static final String MOD_BRANCH_ID = "fabric-1.17.x";
 
-    public static final String MOD_VERSION = StringUtils.getModVersionString(MOD_ID);
+    public static final Version MOD_VERSION;
+
+    static {
+        try {
+            MOD_VERSION = Version.parse(StringUtils.getModVersionString(MOD_ID));
+        } catch (VersionParsingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static UpdateChecker updateChecker = null;

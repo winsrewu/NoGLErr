@@ -1,54 +1,33 @@
 package org.jawbts.noglerr.util;
 
+import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.VersionParsingException;
+
 import java.net.URL;
 
 public class VersionInfo {
-    public String latestVersion;
-    public String lowestSafeVersion;
-    public URL checkUrl;
-    public URL latestDownloadUrl;
+    public final Version latestVersion;
+    public final Version lowestSafeVersion;
+    public final URL checkUrl;
+    public final URL latestDownloadUrl;
 
-    VersionInfo() {
-
-    }
-
-    VersionInfo(String latestVersion, String lowestSafeVersion, URL checkUrl, URL latestDownloadUrl) {
-        this.latestVersion = latestVersion;
-        this.lowestSafeVersion = lowestSafeVersion;
+    VersionInfo(String latestVersion, String lowestSafeVersion, URL checkUrl, URL latestDownloadUrl) throws VersionParsingException {
+        this.latestVersion = Version.parse(latestVersion);
+        this.lowestSafeVersion = Version.parse(lowestSafeVersion);
         this.checkUrl = checkUrl;
         this.latestDownloadUrl = latestDownloadUrl;
     }
 
-    /**
-     * 版本比较, 只支持 (数字).(数字). (...) .(数字) 格式
-     *
-     * @return 如果 a > b, 为 true , 反之 false
-     */
-    public static boolean versionBigger(String a, String b) {
-        String[] sa = a.split("\\.");
-        String[] sb = b.split("\\.");
-        int minL = Math.min(sa.length, sb.length);
-        for (int i = 0; i < minL; i++) {
-            if (Integer.parseInt(sa[i]) > Integer.parseInt(sb[i])) {
-                return true;
-            }
-            if (Integer.parseInt(sa[i]) < Integer.parseInt(sb[i])) {
-                return false;
-            }
-        }
-        return sa.length > sb.length;
+    public boolean isOutDated(Version curVersion) {
+        return latestVersion.compareTo(curVersion) > 0;
     }
 
-    public boolean isOutDated(String curVersion) {
-        return versionBigger(latestVersion, curVersion);
-    }
-
-    public boolean isNotSafe(String curVersion) {
-        return versionBigger(lowestSafeVersion, curVersion);
+    public boolean isNotSafe(Version curVersion) {
+        return lowestSafeVersion.compareTo(curVersion) > 0;
     }
 
     public boolean safeVersionReady() {
-        return !versionBigger(lowestSafeVersion, latestVersion);
+        return lowestSafeVersion.compareTo(latestVersion) <= 0;
     }
 
     @Override
@@ -57,5 +36,39 @@ public class VersionInfo {
                 "\nLowestSafeVersion: " + lowestSafeVersion +
                 "\ncheckUrl: " + (checkUrl == null ? "Null" : checkUrl.toString()) +
                 "\nlatestDownloadUrl: " + latestDownloadUrl.toString();
+    }
+
+    public static class VersionInfoBuilder {
+        private String latestVersion;
+        private String lowestSafeVersion;
+        private URL checkUrl;
+        private URL latestDownloadUrl;
+
+        public VersionInfoBuilder setLatestVersion(String latestVersion) {
+            this.latestVersion = latestVersion;
+            return this;
+        }
+
+        public VersionInfoBuilder setLowestSafeVersion(String lowestSafeVersion) {
+            this.lowestSafeVersion = lowestSafeVersion;
+            return this;
+        }
+
+        public VersionInfoBuilder setCheckUrl(URL checkUrl) {
+            this.checkUrl = checkUrl;
+            return this;
+        }
+
+        public VersionInfoBuilder setLatestDownloadUrl(URL latestDownloadUrl) {
+            this.latestDownloadUrl = latestDownloadUrl;
+            return this;
+        }
+
+        public VersionInfo build() throws VersionParsingException {
+            if (latestVersion == null || lowestSafeVersion == null || latestDownloadUrl == null) {
+                throw new IllegalArgumentException("latestVersion, lowestSafeVersion, and latestDownloadUrl must be set.");
+            }
+            return new VersionInfo(latestVersion, lowestSafeVersion, checkUrl, latestDownloadUrl);
+        }
     }
 }
